@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 @Configuration
@@ -24,14 +25,14 @@ public class ShiroConfig {
 
         //配置系统受限资源
         //配置系统公共资源
-        Map<String,String> map = new HashMap<String,String>();
+        Map<String,String> map = new LinkedHashMap<>();
         map.put("/admin/**","anon");      //测试专用
         map.put("/blog/**","anon");      //测试专用
         map.put("/comment/**","anon");      //测试专用
 
         map.put("/classpath/**","anon");      //测试专用
-        map.put("/user/**","anon");//anon 设置为公共资源  放行资源放在下面
-        map.put("/file/**","anon");//anon 设置为公共资源  放行资源放在下面
+        map.put("/user/**","anon"); //anon 设置为公共资源  放行资源放在下面
+        map.put("/file/**","anon"); //anon 设置为公共资源  放行资源放在下面
 
         map.put("/**","authc");//authc 请求这个资源需要认证和授权
 
@@ -64,10 +65,12 @@ public class ShiroConfig {
         customerRealm.setCredentialsMatcher(hashedCredentialsMatcher);
 
         //开启缓存管理器
-//        customerRealm.setCachingEnabled(true);
-//        customerRealm.setAuthorizationCachingEnabled(true);
-//        customerRealm.setAuthorizationCachingEnabled(true);
-//        customerRealm.setCacheManager(new EhCacheManager());
+        customerRealm.setCachingEnabled(true);
+        customerRealm.setCacheManager(new EhCacheManager());
+        customerRealm.setAuthorizationCachingEnabled(true);
+        customerRealm.setAuthenticationCacheName("AuthenticationCache");      //也可以不设置 有默认值 包名.authenticationCache
+        customerRealm.setAuthorizationCachingEnabled(true);
+        customerRealm.setAuthorizationCacheName("AuthorizationCache");
 
         return customerRealm;
     }

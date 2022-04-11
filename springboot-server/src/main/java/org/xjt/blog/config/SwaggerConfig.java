@@ -27,10 +27,10 @@ public class SwaggerConfig {
     }
 
     private ApiInfo apiInfo(){
-        Contact contact = new Contact("xiongjuntao", "http://www.baidu.com", "1351655382@qq.com");
+        Contact contact = new Contact("xjt", "https://github.com/BFD2018", "1351655382@qq.com");
 
         return new ApiInfo("Api Documentation",
-                "星光博客API文档",
+                "小熊博客API文档",
                 "1.0",
                 "http://localhost:8000",
                 contact,

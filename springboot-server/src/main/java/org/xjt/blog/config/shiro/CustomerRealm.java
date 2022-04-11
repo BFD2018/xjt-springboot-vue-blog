@@ -64,7 +64,11 @@ public class CustomerRealm extends AuthorizingRealm {
         log.debug("====认证的tUser===="+tUser);
 
         if (tUser.getUsername().equals(principal)){
-            SimpleAuthenticationInfo simpleAuthenticationInfo = new SimpleAuthenticationInfo(principal,tUser.getPassword(),new SimpleByteSource(tUser.getSalt()), this.getName());
+            SimpleAuthenticationInfo simpleAuthenticationInfo = new SimpleAuthenticationInfo(
+                    principal,
+                    tUser.getPassword(),
+                    new MyByteSource(tUser.getSalt()),
+                    this.getName());
             return simpleAuthenticationInfo;
         }
 
