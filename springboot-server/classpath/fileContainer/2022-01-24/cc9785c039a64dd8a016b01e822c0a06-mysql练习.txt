@@ -1,0 +1,296 @@
+//查看已存在数据库
+show databases;
+
+//创建数据库
+create database [if not exists] dbxiong;		//[]中的可有可无
+create database [if not exists] dbxiong character set utf8;
+
+//使用数据库
+use dbxiong;
+
+//修改已存在的数据库的编码
+alter database character set utf8;
+
+//删除数据库
+drop database [if exists] dbxiong;
+
+//创建表
+create table if not exists employee(
+	id int primary key auto_increment,
+	name varchar(20) not null,
+	gender bit default 1,
+	birthday date,
+	entry_date date,
+	job_time time,
+	job varchar(30),
+	salary double(6,2) unsigned,
+	resume text
+);
+
+create table if not exists article(
+	aid int primary key auto_increment,
+	title varchar(30),
+	publish_date date,
+	sell_count int,
+	content text
+);
+
+//查看表结构
+mysql> desc employee;
++------------+----------------------+------+-----+---------+----------------+
+| Field      | Type                 | Null | Key | Default | Extra          |
++------------+----------------------+------+-----+---------+----------------+
+| id         | int(11)              | NO   | PRI | NULL    | auto_increment |
+| name       | varchar(20)          | NO   |     | NULL    |                |
+| gender     | bit(1)               | YES  |     | b'1'    |                |
+| birthday   | date                 | YES  |     | NULL    |                |
+| entry_date | date                 | YES  |     | NULL    |                |
+| job_time   | time                 | YES  |     | NULL    |                |
+| job        | varchar(30)          | YES  |     | NULL    |                |
+| salary     | double(6,2) unsigned | YES  |     | NULL    |                |
+| resume     | text                 | YES  |     | NULL    |                |
++------------+----------------------+------+-----+---------+----------------+
+9 rows in set (0.00 sec)
+
+//查看表结构--方式2
+show columns from dbxiong;
+
+//查看dbxiong数据库中的所有表
+show tables;
+
+/*修改表结构*/
+alter table employee add addr varchar(30) after birthday;
+
+//添加多个字段
+alter table employee 
+	add addr varchar(20),
+	add age  int first,
+	add birth varchar(20) after name;	
+	
+//修改列表
+alter table employee change age Age int default 18;
+
+添加列：alter table 表名 add 列名 类型
+删除列：alter table 表名 drop column 列名
+修改列：
+        alter table 表名 modify column 列名 类型;  　　-- 修改类型
+        alter table 表名 change 原列名 新列名 类型; 　　-- 修改列名，类型
+		alter table employee modify column salary double(10,2);
+   
+添加主键：
+        alter table 表名 add primary key(列名);
+删除主键：
+        alter table 表名 drop primary key;
+        alter table 表名  modify  列名 int, drop primary key;
+   
+添加外键：alter table 从表 add constraint 外键名称（形如：FK_从表_主表） foreign key 从表(外键字段) references 主表(主键字段);
+删除外键：alter table 表名 drop foreign key 外键名称
+   
+修改默认值：ALTER TABLE testalter_tbl ALTER i SET DEFAULT 1000;
+删除默认值：ALTER TABLE testalter_tbl ALTER i DROP DEFAULT;
+
+//删除表
+drop table employee;
+
+//清空表
+delete from employee;
+
+
+/*表操作*/
+//插入
+	insert into employee(id,name,gender,birthday,addr,entry_date,job_time,job,salary,resume)
+	values(1,"xiong",1,"1993-06-21","深圳市宝安区","2020-07-09",9,"程序员",8000.56,"一个优秀的coder");
+
+	insert into employee(id,name,job) values(5,"刘思雅","HR小姐姐");
+	insert into employee(name,job) values("刘梅","公关");	//id从6开始
+	insert into employee(name,job) values("章子怡","公关");
+	insert into employee(name,job,salary) values("刘亦菲","公关",26000.12);			
+	insert into employee(name,job,salary) values("迪丽热巴","公关",36000.12);			
+		
+//修改
+	update employee set name="JustinXiong",salary=17852.32 where id=1;
+	update employee set salary=8000.45 where name="刘梅";
+	update employee set salary=38000.45 where name="章子怡";
+
+//删除
+	delete from employee where job="公关";
+
+//查找
+	//salary从小到大排序，-salary从大到小
+	select id,name,salary,job from employee where (salary>10000 and job="公关") order by salary;
+	select id,name,salary,job from employee where salary>10000 and salary<20000;
+	select id,name,salary,job from employee where between 10000 and 20000;
+	select id,name,job from employee where name like "刘%";
+	
+INSERT INTO order_menu (product_name,price,born_date,class) values
+("苹果",4.55,"2020-11-30","水果"),
+("香蕉",80,"2020-10-10","水果"),
+("水壶",120,"2020-12-01","电器"),
+("被罩",70,"2020-09-23","床上用品"),
+("音响",420,"2020-10-02","电器"),
+("床单",55,"2020-09-12","床上用品"),
+("草莓",34,"2020-12-02","水果");
+
+
+//字符长度作为筛选条件 char_length(class)<4
+select class,SUM(price) from order_menu where char_length(class)<4 group by class having sum(price)>150;
+	
+	
+	
+//综合练习
+//1、创建表
+create table if not exists class(
+	cid int primary key auto_increment,
+	caption varchar(20)
+);
+
+insert into class(caption) values ("三年一班"),("三年二班"),("三年三班");
+
+create table if not exists student(
+	sid int primary key auto_increment,
+	sname varchar(20),
+	gender bit default 1,
+	class_id int,
+	constraint fk_sc foreign key(class_id) references class(cid) on delete cascade
+);
+insert into student(sname,gender,class_id) values ("张曼玉",0,1),
+													("张无忌",1,2),
+													("张三丰",1,3),
+													("张红莲",0,3);
+													
+create table if not exists teacher(
+	tid int primary key auto_increment,
+	tname varchar(20)
+);
+insert into teacher(tname) values ("波多"),("仓空"),("饭岛");	
+
+create table if not exists course(
+	cid int primary key auto_increment,
+	cname varchar(20),
+	teacher_id int,
+	constraint fk_ct foreign key(teacher_id) references teacher(tid) on delete cascade
+);
+insert into course(cname,teacher_id) values ("生物",3),("体育",1),("音乐",2);
+
+
+create table if not exists score(
+	sid int primary key auto_increment,
+	student_id int,
+	course_id int,
+	number int,	
+	constraint fk_ss foreign key(student_id) references student(sid) on delete cascade,
+	constraint fk_scorecourse foreign key(course_id) references course(cid) on delete cascade
+);
+insert into score(student_id,course_id,number) values (1,1,60),
+													(1,2,59),
+													(2,2,100);
+
+select * from shop_goods as a 
+	join shop_recommended_goods as b 
+    where a.goods_id = b.goods_id 
+    and b.recom_id = 36 
+    order by b.sort_order asc 
+    limit 14
+	
+//MySQL多表联查的简单方法：
+select c.nom, e.nom   
+from consultant c, affaire a, besoin b, salarie sa, site s, entreprise e  
+where c.consultant_id=a.consultant_id and a.besoin_id=b.besoin_id and   
+b.salarie_id=sa.salarie_id and ssa.site_id=s.site_id and s.entreprise_id=e.entreprise_id  
+
+//MySQL多表联查的inner join方法：
+select c.nom, e.nom  
+from consultant c  
+inner join affaire a on c.consultant_id=a.consultant_id  
+inner join besoin b on a.besoin_id=b.besoin_id  
+inner join salarie sa on b.salarie_id=sa.salarie_id  
+inner join site s on ssa.site_id=s.site_id  
+inner join entreprise e on s.entreprise_id=e.entreprise_id  
+
+
+2、操作表
+
+1、自行创建测试数据
+
+2、查询“生物”课程比“物理”课程成绩高的所有学生的学号；
+select sid from 
+
+3、查询平均成绩大于60分的同学的学号和平均成绩； 
+
+4、查询所有同学的学号、姓名、选课数、总成绩；
+
+5、查询姓“李”的老师的个数；
+
+6、查询没学过“叶平”老师课的同学的学号、姓名；
+
+7、查询学过“001”并且也学过编号“002”课程的同学的学号、姓名；
+
+8、查询学过“叶平”老师所教的所有课的同学的学号、姓名；
+
+9、查询课程编号“002”的成绩比课程编号“001”课程低的所有同学的学号、姓名；
+
+10、查询有课程成绩小于60分的同学的学号、姓名；
+
+11、查询没有学全所有课的同学的学号、姓名；
+
+12、查询至少有一门课与学号为“001”的同学所学相同的同学的学号和姓名；
+
+13、查询至少学过学号为“001”同学所有一门课的其他同学学号和姓名；
+
+14、查询和“002”号的同学学习的课程完全相同的其他同学学号和姓名；
+
+15、删除学习“叶平”老师课的SC表记录；
+
+16、向SC表中插入一些记录，这些记录要求符合以下条件：①没有上过编号“002”课程的同学学号；②插入“002”号课程的平均成绩； 
+
+17、按平均成绩从低到高显示所有学生的“语文”、“数学”、“英语”三门的课程成绩，按如下形式显示： 学生ID,语文,数学,英语,有效课程数,有效平均分；
+
+18、查询各科成绩最高和最低的分：以如下形式显示：课程ID，最高分，最低分；
+
+19、按各科平均成绩从低到高和及格率的百分数从高到低顺序；
+
+20、课程平均分从高到低显示（现实任课老师）；
+
+21、查询各科成绩前三名的记录:(不考虑成绩并列情况) 
+
+22、查询每门课程被选修的学生数；
+
+23、查询出只选修了一门课程的全部学生的学号和姓名；
+
+24、查询男生、女生的人数；
+
+25、查询姓“张”的学生名单；
+
+26、查询同名同姓学生名单，并统计同名人数；
+
+27、查询每门课程的平均成绩，结果按平均成绩升序排列，平均成绩相同时，按课程号降序排列；
+
+28、查询平均成绩大于85的所有学生的学号、姓名和平均成绩；
+
+29、查询课程名称为“数学”，且分数低于60的学生姓名和分数；
+
+30、查询课程编号为003且课程成绩在80分以上的学生的学号和姓名； 
+
+31、求选了课程的学生人数
+
+32、查询选修“杨艳”老师所授课程的学生中，成绩最高的学生姓名及其成绩；
+
+33、查询各个课程及相应的选修人数；
+
+34、查询不同课程但成绩相同的学生的学号、课程号、学生成绩；
+
+35、查询每门课程成绩最好的前两名；
+
+36、检索至少选修两门课程的学生学号；
+
+37、查询全部学生都选修的课程的课程号和课程名；
+
+38、查询没学过“叶平”老师讲授的任一门课程的学生姓名；
+
+39、查询两门以上不及格课程的同学的学号及其平均成绩；
+
+40、检索“004”课程分数小于60，按分数降序排列的同学学号；
+
+41、删除“002”同学的“001”课程的成绩；
+
+

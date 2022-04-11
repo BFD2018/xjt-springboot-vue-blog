@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.xjt.blog.mapper.TUserFileMapper">
+    <select id="getCountsGroupByUserAndFileType" resultType="map">
+		SELECT
+		  t_user.`username`,
+		  t_user.`nickname`,
+		  user_id,
+		  uf.`file_type`,
+		  COUNT(uf.id) AS num
+		FROM
+		  t_user_file AS uf
+		  LEFT JOIN t_user
+			ON uf.`user_id` = t_user.`id`
+		GROUP BY uf.`user_id`,uf.`file_type`
+	</select>
+
+</mapper>

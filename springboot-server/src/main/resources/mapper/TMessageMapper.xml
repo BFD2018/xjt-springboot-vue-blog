@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.xjt.blog.mapper.TMessageMapper">
+	<select id="selectLevel1Messages" resultType="map" parameterType="string">
+		SELECT
+		  m.`id`,
+		  m.`user_id`,
+		  m.`creator_id`,
+		  m.`content`,
+		  m.`parent_message_id`,
+		  m.`create_time`,
+		  u.`username`,
+		  u.`nickname`,
+		  u.`avatar`
+		FROM
+		  t_message m
+		  LEFT JOIN t_user u
+		    ON m.`creator_id` = u.`id`
+		WHERE m.`user_id` = #{uid} AND m.`parent_message_id`= -1
+		ORDER BY m.`create_time` DESC
+	</select>
+	
+	<select id="selectLevel1Replys" resultType="map" parameterType="string">
+		SELECT
+		  m.`id`,
+		  m.`user_id`,
+		  m.`creator_id`,
+		  m.`content`,
+		  m.`parent_message_id`,
+		  m.`create_time`,
+		  u.`username`,
+		  u.`nickname`,
+		  u.`avatar`
+		FROM
+		  t_message m
+		  LEFT JOIN t_user u
+		    ON m.`creator_id` = u.`id`
+		WHERE m.`user_id` = #{uid} AND m.`parent_message_id`= #{parent_message_id}
+		ORDER BY m.`create_time` DESC
+	</select>
+	
+	<select id="selectLevel2Replys" resultType="map" parameterType="string">
+		SELECT
+		  m.`id`,
+		  m.`user_id`,
+		  m.`creator_id`,
+		  m.`content`,
+		  m.`parent_message_id`,
+		  m.`create_time`,
+		  u.`username`,
+		  u.`nickname`,
+		  u.`avatar`
+		FROM
+		  t_message m
+		  LEFT JOIN t_user u
+		    ON m.`creator_id` = u.`id`
+		WHERE m.`user_id` = #{uid} AND m.`parent_message_id`= #{parent_message_id}
+		ORDER BY m.`create_time` DESC
+	</select>
+
+</mapper>

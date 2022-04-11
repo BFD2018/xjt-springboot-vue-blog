@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.xjt.blog.mapper.TRoleMapper">
+	
+	<select id="getUserCountsGroupByRole" resultType="map">
+		SELECT
+		  r.`name_zh` AS `name`,
+		  COUNT(u.`id`) AS `value`
+		FROM
+		  t_role AS r
+		  LEFT JOIN t_user_role AS ur
+			ON ur.`roleid` = r.`id`
+		  LEFT JOIN t_user AS u
+			ON ur.`userid` = u.`id`
+		GROUP BY r.`name_zh`
+	</select>
+
+</mapper>

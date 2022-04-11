@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.xjt.blog.mapper.TCommentMapper">
+	<select id="selectLevelOneComments" resultType="map" parameterType="string">
+		SELECT
+		  c.`id`,
+		  c.`user_id`,
+		  c.`content`,
+		  c.`blog_id`,
+		  c.`parent_comment_id`,
+		  c.`create_time`,
+		  u.`username`,
+		  u.`nickname`,
+		  u.`avatar`
+		FROM
+		  t_comment c
+		  LEFT JOIN t_user u
+		    ON c.`user_id` = u.`id`
+		WHERE c.`blog_id` = #{blog_id} AND c.`parent_comment_id`= #{parent_id}
+		ORDER BY c.`create_time` DESC
+	</select>
+	
+	<select id="selectLevelOneReplys" resultType="map" parameterType="string">
+		SELECT
+		  c.`id`,
+		  c.`user_id`,
+		  c.`content`,
+		  c.`blog_id`,
+		  c.`parent_comment_id`,
+		  c.`create_time`,
+		  u.`username`,
+		  u.`nickname`,
+		  u.`avatar`
+		FROM
+		  t_comment c
+		  LEFT JOIN t_user u
+		    ON c.`user_id` = u.`id`
+		WHERE c.`blog_id` = #{blog_id} AND c.`parent_comment_id`= #{parent_id}
+		ORDER BY c.`create_time` DESC
+	</select>
+	
+	<select id="selectLevelTwoReplys" resultType="map" parameterType="string">
+		SELECT
+		  c.`id`,
+		  c.`user_id`,
+		  c.`content`,
+		  c.`blog_id`,
+		  c.`parent_comment_id`,
+		  c.`create_time`,
+		  u.`username`,
+		  u.`nickname`,
+		  u.`avatar`
+		FROM
+		  t_comment c
+		  LEFT JOIN t_user u
+		    ON c.`user_id` = u.`id`
+		WHERE c.`blog_id` = #{blog_id} AND c.`parent_comment_id`= #{parent_id}
+		ORDER BY c.`create_time` DESC
+	</select>
+
+	<select id="getAllComments" resultType="map">
+		SELECT
+		  t_comment.*,
+		  u.`username`,
+		  blog.`title`
+		FROM
+		  t_comment
+		  LEFT JOIN t_user AS u
+			ON t_comment.`user_id` = u.`id`
+		  LEFT JOIN t_blog AS blog
+			ON t_comment.`blog_id` = blog.`id`
+	</select>
+
+	<select id="getCommentNumGroupByUserId" resultType="map">
+		SELECT
+		  c.`user_id`,
+		  u.`username`,
+		  u.`nickname`,
+		  COUNT(c.`id`) AS num
+		FROM
+		  t_comment AS c
+		  LEFT JOIN t_user AS u
+			ON c.`user_id` = u.`id`
+		GROUP BY c.`user_id`
+	</select>
+
+</mapper>

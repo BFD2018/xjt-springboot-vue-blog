@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.xjt.blog.mapper.TUserMapper">
+	<resultMap id="userMap" type="org.xjt.blog.entity.TUser">
+		<id column="uid" property="id"/>
+		<result column="username" property="username"/>
+		<result column="nickname" property="nickname"/>
+		<result column="avatar" property="avatar"/>
+		<result column="email" property="email"/>
+		<result column="description" property="description"/>
+		<!--角色信息-->
+		<collection property="roles" javaType="list" ofType="org.xjt.blog.entity.TRole">
+			<id column="rid" property="id"/>
+			<result column="rname" property="name"/>
+		</collection>
+	</resultMap>
+	
+	<select id="selectRolesByUsername" parameterType="string" resultMap="userMap">
+        SELECT
+          u.id uid,
+          u.username,
+          u.nickname,
+          u.avatar,
+          u.email,
+          u.description,
+          r.id rid,
+          r.name rname
+        FROM
+          t_user u
+          LEFT JOIN t_user_role ur
+            ON u.id = ur.userid
+          LEFT JOIN t_role r
+            ON ur.roleid = r.id
+        WHERE u.username = #{username}
+    </select>
+
+</mapper>
