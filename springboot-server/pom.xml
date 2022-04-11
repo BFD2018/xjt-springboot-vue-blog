@@ -10,7 +10,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>org.xjt.blog</groupId>
-	<artifactId>xiong-blog-server</artifactId>
+	<artifactId>springboot-server</artifactId>
 	<version>1.0-SNAPSHOT</version>
 
 	<dependencies>
