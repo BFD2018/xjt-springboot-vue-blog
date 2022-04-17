@@ -1,5 +1,6 @@
 package org.xjt.blog.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.wf.captcha.SpecCaptcha;
 import com.wf.captcha.base.Captcha;
 import com.wf.captcha.utils.CaptchaUtil;
@@ -13,19 +14,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import org.xjt.blog.config.shiro.UserEmailToken;
 import org.xjt.blog.entity.TUser;
 import org.xjt.blog.entity.TUserFile;
 import org.xjt.blog.entity.TUserRole;
 import org.xjt.blog.mapper.TUserFileMapper;
+import org.xjt.blog.mapper.TUserMapper;
 import org.xjt.blog.service.TRoleService;
 import org.xjt.blog.service.TUserRoleService;
 import org.xjt.blog.service.TUserService;
+import org.xjt.blog.utils.MyMailUtil;
 import org.xjt.blog.utils.RespBean;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashMap;
 
 @Slf4j
@@ -34,6 +39,9 @@ import java.util.HashMap;
 public class TUserController {
     @Autowired
     private TUserService tUserService;
+
+    @Autowired
+    private TUserMapper tUserMapper;
 
     //获取所有用户
     @ResponseBody
@@ -53,45 +61,92 @@ public class TUserController {
     @PostMapping("/login")
     @ResponseBody
     public RespBean login(@RequestBody HashMap<String,String> params, HttpSession session) {
+        System.out.println(params);
+        //1、用户名密码登录
         String username = params.get("username");
         String password = params.get("password");
         String verify_code = params.get("verify_code");
-        System.out.println(params);
-        //比较验证码
-        String codes = (String) session.getAttribute("verify_code");
-        log.warn("session中保存的验证码："+codes);
-        log.warn("用户输入的验证码："+verify_code);
 
-        try {
-            if (codes.equalsIgnoreCase(verify_code)){
+        //2、邮箱登录
+        String email = params.get("email");
+        String email_code = params.get("code");
+
+        if(StringUtils.hasText(username) && StringUtils.hasText(password) && StringUtils.hasText(verify_code)){
+            try {
+                //比较验证码
+                String codes = (String) session.getAttribute("verify_code");
+                log.warn("session中保存的验证码："+codes);
+                log.warn("用户输入的验证码："+verify_code);
+
+                if (codes.equalsIgnoreCase(verify_code)){
+                    //获取主体对象
+                    Subject subject = SecurityUtils.getSubject();
+
+                    UsernamePasswordToken token = new UsernamePasswordToken(username, password);
+                    subject.login(token);
+
+                    //用户登录成功，将tUser返回给前端
+                    TUser tUser = tUserService.findByUserName((String) subject.getPrincipal());
+
+                    //将登陆用户存到session中
+                    session.setAttribute("login_user",tUser);
+
+                    return RespBean.ok("登录成功！",tUser);
+                }else{
+                    log.error("验证码错误!");
+                    return RespBean.warn("验证码错误！");
+                }
+            } catch (UnknownAccountException e) {
+                e.printStackTrace();
+                return RespBean.error("用户名错误！");
+            } catch (IncorrectCredentialsException e) {
+                e.printStackTrace();
+                System.out.println("密码错误!");
+                return RespBean.error("密码错误！");
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.out.println(e.getMessage());
+                return RespBean.error(e.getMessage());
+            }
+        }
+        else if(StringUtils.hasText(email) && StringUtils.hasText(email_code)){
+            //2、邮箱登录
+            String code = (String) session.getAttribute("email_code");
+            log.warn("session中保存的邮箱验证码："+code);
+            log.warn("用户输入的邮箱验证码："+email_code);
+
+            if (code.equals(email_code)){
                 //获取主体对象
-                Subject subject = SecurityUtils.getSubject();
+                Subject subject2 = SecurityUtils.getSubject();
 
-                subject.login(new UsernamePasswordToken(username, password));
+                UserEmailToken userEmailToken = new UserEmailToken(email);
+                subject2.login(userEmailToken);
 
-                //用户登录成功，将tUser返回给前端
-                TUser tUser = tUserService.findByUserName((String) subject.getPrincipal());
+                TUser login_user = (TUser)SecurityUtils.getSubject().getSession().getAttribute("login_user");
+                log.warn("将已登录成功的用户存入到session中 tUser="+login_user.toString());
 
-                //将登陆用户存到session中
-                session.setAttribute("login_user",tUser);
+                // 销毁验证码
+                session.removeAttribute("email_code");
 
-                return RespBean.ok("登录成功！",tUser);
+                return RespBean.ok("登录成功！",login_user);
             }else{
                 log.error("验证码错误!");
                 return RespBean.warn("验证码错误！");
             }
-        } catch (UnknownAccountException e) {
-            e.printStackTrace();
-            return RespBean.error("用户名错误！");
-        } catch (IncorrectCredentialsException e) {
-            e.printStackTrace();
-            System.out.println("密码错误!");
-            return RespBean.error("密码错误！");
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println(e.getMessage());
-            return RespBean.error(e.getMessage());
         }
+        else{
+            return RespBean.error("请检查是否正确输入");
+        }
+    }
+
+    @GetMapping("/sendMailCode")
+    @ResponseBody
+    public RespBean sendMailCode(@RequestParam("email") String email,HttpSession session){
+        String mailCode = MyMailUtil.sendMail(email);
+        session.setAttribute("email_code",mailCode);
+        session.setMaxInactiveInterval(60*3);     //设置3分钟有效
+
+        return RespBean.ok("邮件发送成功，请速去邮箱查看！");
     }
 
     //游客登录

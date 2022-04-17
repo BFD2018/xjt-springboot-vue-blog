@@ -30,4 +30,5 @@ public interface TUserService {
 
     RespBean getUserListByName(String name);
 
+    TUser findUserByEmail(String email);
 }

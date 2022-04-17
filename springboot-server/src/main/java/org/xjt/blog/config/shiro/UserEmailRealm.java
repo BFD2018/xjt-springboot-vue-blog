@@ -1,13 +1,12 @@
 package org.xjt.blog.config.shiro;
 
-import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.CollectionUtils;
-import org.apache.shiro.util.SimpleByteSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.xjt.blog.entity.TPerms;
 import org.xjt.blog.entity.TRole;
@@ -16,16 +15,13 @@ import org.xjt.blog.service.TUserService;
 
 import java.util.List;
 
-@Slf4j
-public class CustomerRealm extends AuthorizingRealm {
+public class UserEmailRealm extends AuthorizingRealm {
     @Autowired
     private TUserService tUserService;
 
-    //授权
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
-        System.out.println("======doGetAuthenticationInfo=======");
-
+        System.out.println("————密码授权————doGetAuthorizationInfo————");
         String principal = (String) principals.getPrimaryPrincipal();
         TUser user = tUserService.findRolesByUsername(principal);
 
@@ -44,34 +40,28 @@ public class CustomerRealm extends AuthorizingRealm {
             }
             return authorizationInfo;
         }
+
         return null;
     }
 
-    //认证
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
-        System.out.println("======doGetAuthenticationInfo=======");
+        System.out.println("————邮箱登录认证————doGetAuthenticationInfo————");
+        UserEmailToken userEmailToken = (UserEmailToken) token;
+        String principal = (String) userEmailToken.getPrincipal();
 
-        //获取用户名
-        String principal = (String) token.getPrincipal();
-        log.debug("====用户名===="+principal);
-
-        //假设是从数据库获得的 用户名，密码
-        TUser tUser = tUserService.findByUserName(principal);
-        log.debug("====认证的tUser===="+tUser);
-
-
-
-        if (tUser.getUsername().equals(principal)){
-            SimpleAuthenticationInfo simpleAuthenticationInfo = new SimpleAuthenticationInfo(
-                    principal,
-                    tUser.getPassword(),
-                    new MyByteSource(tUser.getSalt()),
-                    this.getName());
-            return simpleAuthenticationInfo;
+        //根据邮箱查询用户
+        TUser tUser = tUserService.findUserByEmail(principal);
+        //因为没有密码，并且验证码在之前就验证了
+        if (tUser == null) {
+            throw new UnknownAccountException();
         }
 
-        return null;
+        SecurityUtils.getSubject().getSession().setAttribute("login_user",tUser);
+
+        return new SimpleAuthenticationInfo(
+                principal,principal,this.getName()
+        );
     }
 
     /**
@@ -82,6 +72,6 @@ public class CustomerRealm extends AuthorizingRealm {
      */
     @Override
     public boolean supports(AuthenticationToken var1) {
-        return var1 instanceof UsernamePasswordToken;
+        return var1 instanceof HostAuthenticationToken;
     }
 }

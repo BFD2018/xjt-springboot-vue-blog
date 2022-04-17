@@ -120,4 +120,12 @@ public class TUserServiceImpl implements TUserService {
             return RespBean.ok("ok",userList);
         }
     }
+
+    @Override
+    public TUser findUserByEmail(String email) {
+
+        TUser user = tUserMapper.selectOne(new QueryWrapper<TUser>().eq("email", email));
+
+        return user;
+    }
 }

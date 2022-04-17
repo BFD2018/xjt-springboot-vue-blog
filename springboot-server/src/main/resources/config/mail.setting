@@ -1,0 +1,5 @@
+host = smtp.163.com
+from = xjt21760446@163.com
+user = 15990076961@163.com
+pass = FWVSVBFXAXKXDDCB
+auth = true

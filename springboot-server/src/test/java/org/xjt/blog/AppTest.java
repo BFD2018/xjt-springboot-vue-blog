@@ -17,6 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.util.ResourceUtils;
 import org.springframework.util.StringUtils;
 import org.xjt.blog.service.TBlogService;
+import org.xjt.blog.utils.MyMailUtil;
 import org.xjt.blog.utils.MyUtils;
 import org.xjt.blog.utils.RespBean;
 
@@ -162,7 +163,7 @@ public class AppTest
 
     @Test
     public void test05(){
-        MyUtils myUtils = new MyUtils();
-        System.out.println(myUtils.getUrl());
+        String s = MyMailUtil.sendMail("1351655382@qq.com");
+        System.out.println(s);
     }
 }
