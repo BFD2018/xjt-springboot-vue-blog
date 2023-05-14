@@ -2,7 +2,7 @@
 
 xiong-blog是基于springboot+vue的前后端分离的博客系统，包括如下几个部分服务端（提供API服务）xiong-blog-server，后台管理界面xiong-blog-backend，前台界面xiong-blog-front。
 
-## 后台xiong-blog-backend
+## 后台blog-end
 
 https://github.com/BFD2018/xiong-blog-backend
 
@@ -37,7 +37,6 @@ npm run build
 - [x] Vue2.6 
 - [x] element-ui
 - [x] mavon-editor实现markdown格式文档
-- [x] 
 
 ### 效果
 
@@ -103,7 +102,7 @@ kkfileView文件预览
 
 ![1643892888419](typora-assets/1643892888419.png)
 
-## 前台xiong-blog-front
+## 前台blog-front
 
 https://github.com/BFD2018/-xiong-blog-front
 
@@ -175,19 +174,39 @@ https://github.com/BFD2018/-xiong-blog-front
 
 ![1643893369527](typora-assets/1643893369527.png)
 
-## 服务端xiong-blog-server
+## 服务端springboot-server
 
-https://github.com/BFD2018/springboot-blog
+### 配置
 
-技术栈：
+- 数据库
+
+> 运行 xiong-blog.sql 脚本，创建数据库 xiong-blog
+>
+> ![image-20230514211512390](typora-assets/image-20230514211512390.png)
+
+- 阿里云OSS对象存储配置
+
+![image-20230514213429821](typora-assets/image-20230514213429821.png)
+
+- [kkFileView](https://kkview.cn/zh-cn/index.html)
+
+> kkFileView为文件文档在线预览解决方案
+
+
+
+### 技术栈
 
 - [x] springboot
 - [x] mybatis-plus
 - [x] pageHelper分页
 - [x] shiro权限控制
+  - [x] 自定义用户名密码登录realm
+  - [x] 自定义邮箱登录realm
+  - [x] 根据认证后获取的principals，给用户对象授权
 - [x] fastjson
 - [x] easy-captcha
 - [x] hutool
+  - [x] 发邮件（需要依赖spring-boot-starter-mail）
 - [x] jieba分词
 - [x] kumo词云
 - [x] springboot+redis缓存
@@ -197,9 +216,36 @@ https://github.com/BFD2018/springboot-blog
 
 ![1643893579677](typora-assets/1643893579677.png)
 
-### 分页
+### 功能说明
+
+#### 分页功能
 
 返回的`IPage<>`对象包括  records、total、size、current、pages 
 
 ![image-20211021201109218](typora-assets/image-20211021201109218.png)
 
+#### 发送邮件
+
+https://blog.csdn.net/qq355972697/article/details/114637374
+
+导入依赖
+
+```xml
+<dependency>
+    <groupId>cn.hutool</groupId>
+    <artifactId>hutool-all</artifactId>
+    <version>5.7.11</version>
+</dependency>
+
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-mail</artifactId>
+    <version>2.6.3</version>
+</dependency>
+```
+
+#### Shiro权限控制
+
+#### Redis缓存
+
+> 未实现

@@ -67,7 +67,7 @@
 								:show-file-list="false"
 								:on-success="handleUploadSuccess"
 								:before-upload="beforeUpload">
-							<img v-if="this.step2Form.avatar" :src="$store.state.HOST + this.step2Form.avatar" class="avatar">
+							<img v-if="this.step2Form.avatar" :src="this.step2Form.avatar" class="avatar">
 							<i v-else class="el-icon-plus avatar-uploader-icon"></i>
 						</el-upload>
 					</el-form-item>

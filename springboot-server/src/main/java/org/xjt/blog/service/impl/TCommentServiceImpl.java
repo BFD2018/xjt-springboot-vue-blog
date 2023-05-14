@@ -90,6 +90,22 @@ public class TCommentServiceImpl implements TCommentService {
         return RespBean.ok("ok",levelOneCommentList);
     }
 
+    private void recursively(String blogId, String childId,String parentNickname) {
+        //根据子一级回复的id找到子二级回复
+        List<Map<String, Object>> replayComments = tCommentMapper.selectLevelTwoReplys(blogId,childId);
+
+        if(replayComments.size() > 0){
+            for(Map<String, Object> replayComment : replayComments){
+                String replayId = String.valueOf(replayComment.get("id"));
+                replayComment.put("parent_comment_nickname",parentNickname);
+                String nickname = String.valueOf(replayComment.get("nickname"));
+                tempReplys.add(replayComment);
+
+                recursively(blogId,replayId,nickname);
+            }
+        }
+    }
+
     @Override
     public RespBean getAllComments() {
         boolean exists = redisUtils.exists("blog-blogsCountByType");
@@ -122,21 +138,7 @@ public class TCommentServiceImpl implements TCommentService {
         }
     }
 
-    private void recursively(String blogId, String childId,String parentNickname) {
-        //根据子一级回复的id找到子二级回复
-        List<Map<String, Object>> replayComments = tCommentMapper.selectLevelTwoReplys(blogId,childId);
 
-        if(replayComments.size() > 0){
-            for(Map<String, Object> replayComment : replayComments){
-                String replayId = String.valueOf(replayComment.get("id"));
-                replayComment.put("parent_comment_nickname",parentNickname);
-                String nickname = String.valueOf(replayComment.get("nickname"));
-                tempReplys.add(replayComment);
-
-                recursively(blogId,replayId,nickname);
-            }
-        }
-    }
 
 
 }

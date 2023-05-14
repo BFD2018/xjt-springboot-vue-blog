@@ -163,7 +163,7 @@
         let params = {
           "user_id": this.$store.state.login_user.id,
           "content": val,
-          "blog_id": this.blog_id,
+          "blog_id": this.blogInfo.bid,
           "parent_comment_id": this.currentReplyParentId,
         };
         //console.log(params);

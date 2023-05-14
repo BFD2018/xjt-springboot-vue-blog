@@ -21,10 +21,10 @@ import java.util.List;
 public class TBlog implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @JsonSerialize(using = ToStringSerializer.class)
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     @ApiModelProperty(value = "博客id")
-    @TableId(type = IdType.ID_WORKER)
-    private Long id;
+    @TableId(type = IdType.AUTO)
+    private int id;
 
     @ApiModelProperty(value = "标题")
     private String title;

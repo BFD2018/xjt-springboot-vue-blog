@@ -113,7 +113,7 @@
       }
     },
     created() {
-      console.log(this.$route);
+      //console.log(this.$route);
     },
     watch:{
       $route(route){

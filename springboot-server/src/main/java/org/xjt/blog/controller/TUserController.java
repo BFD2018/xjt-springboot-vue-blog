@@ -1,6 +1,5 @@
 package org.xjt.blog.controller;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.wf.captcha.SpecCaptcha;
 import com.wf.captcha.base.Captcha;
 import com.wf.captcha.utils.CaptchaUtil;
@@ -16,9 +15,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.xjt.blog.config.shiro.UserEmailToken;
 import org.xjt.blog.entity.TUser;
-import org.xjt.blog.entity.TUserFile;
 import org.xjt.blog.entity.TUserRole;
-import org.xjt.blog.mapper.TUserFileMapper;
 import org.xjt.blog.mapper.TUserMapper;
 import org.xjt.blog.service.TRoleService;
 import org.xjt.blog.service.TUserRoleService;
@@ -30,7 +27,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.HashMap;
 
 @Slf4j
@@ -39,9 +35,6 @@ import java.util.HashMap;
 public class TUserController {
     @Autowired
     private TUserService tUserService;
-
-    @Autowired
-    private TUserMapper tUserMapper;
 
     //获取所有用户
     @ResponseBody
@@ -57,7 +50,6 @@ public class TUserController {
         return tUserService.getUserListByName(name);
     }
 
-    //博主登录
     @PostMapping("/login")
     @ResponseBody
     public RespBean login(@RequestBody HashMap<String,String> params, HttpSession session) {

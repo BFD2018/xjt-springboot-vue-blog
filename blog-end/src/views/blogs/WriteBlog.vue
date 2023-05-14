@@ -122,7 +122,7 @@
 			//初始化
 			init(){
 			  /*初始化mavon-editor*/
-        this.$refs.md.value = "";
+        //this.$refs.md.value = "";
 
 				/*获取所有tags*/
 				this.$getRequest("/tag/all").then(res =>{
@@ -135,7 +135,7 @@
 				})
 
 				/*获取所有type*/
-				this.$request("/type/all").then(res =>{
+				this.$getRequest("/type/all").then(res =>{
 					console.log(res);
 					if(res.data.status === 200){
 						//每次请求时清空tableData数据
