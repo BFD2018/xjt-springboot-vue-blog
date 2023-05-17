@@ -5,6 +5,7 @@ import org.xjt.blog.entity.TBlog;
 import org.xjt.blog.utils.RespBean;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public interface TBlogService {
     RespBean getBlogsByPage(Integer current, Integer size, Boolean published, String flag, Boolean share_statement, Boolean is_delete);
@@ -28,4 +29,6 @@ public interface TBlogService {
     RespBean getBlogCountsByType();
 
     RespBean getAllBlogTitleToWordCloud();
+
+    Map todayHistoryEvent();
 }

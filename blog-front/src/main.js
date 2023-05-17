@@ -54,6 +54,9 @@ Vue.prototype.$request = $request;
 Vue.prototype.$getRequest = $getRequest;
 Vue.prototype.$postRequest = $postRequest;
 
+//AdminLTE
+import 'admin-lte/dist/js/adminlte.min.js'
+import 'admin-lte/dist/css/adminlte.min.css'
 
 new Vue({
   router: routers,

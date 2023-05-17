@@ -8,9 +8,9 @@ import org.springframework.cache.annotation.EnableCaching;
 @Slf4j
 @SpringBootApplication
 @EnableCaching
-public class StarLightBlogApplication {
+public class XiongBlogApplication {
     public static void main( String[] args ) {
-        SpringApplication.run(StarLightBlogApplication.class,args);
+        SpringApplication.run(XiongBlogApplication.class,args);
         log.warn("登录小熊博客后台api测试端口  http://localhost:8000/");
         log.warn("登录小熊博客后台管理  http://localhost:8001/");
         log.warn("登录小熊博客前台页面  http://localhost:8002/");

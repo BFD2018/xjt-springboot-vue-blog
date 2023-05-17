@@ -28,6 +28,27 @@
     </div>
 
     <div class="layout-right" v-if="$store.state.login_user">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">历史上的今天</div>
+          <div class="card-tools">
+            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+              <i class="fas fa-minus"></i>
+            </button>
+          </div>
+        </div>
+        <div class="card-body">
+          <el-timeline :reverse="true">
+            <el-timeline-item
+                v-for="(activity, index) in todayHistoryEventList"
+                :key="index"
+                :timestamp="activity.date">
+              {{ activity.title }}
+            </el-timeline-item>
+          </el-timeline>
+        </div>
+      </div>
+
       <el-card class="box-card">
         <div class="clearfix my-title" slot="header">用户信息</div>
         <div class="my-middle">
@@ -96,6 +117,7 @@
         blogsList: [],		//博客
         typesList: [],		//分类
         hotBlogs: [],		//热门博客
+        todayHistoryEventList:[],
 
         //分页
         totalBlogs: 0,
@@ -105,6 +127,12 @@
       }
     },
     methods: {
+      initGetToadyHistroy(){
+        this.$getRequest("/blog/front/juhe/todayevent").then(res => {
+          console.log(res);
+          this.todayHistoryEventList = res.data.obj.result
+        })
+      },
       initBlogs() {
         let baseUrl = `/blog/getByPageHelper?current=${this.currentPage}&size=${this.pageSize}`;
 
@@ -162,6 +190,8 @@
     created() {
       this.initBlogs();
       this.initType();
+
+      this.initGetToadyHistroy();
 
       console.log(this.$store.state.login_user);
     }

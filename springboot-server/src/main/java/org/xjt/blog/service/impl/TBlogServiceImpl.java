@@ -1,6 +1,6 @@
 package org.xjt.blog.service.impl;
 
-import cn.hutool.core.date.DateTime;
+import cn.hutool.core.date.DateUtil;
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -9,23 +9,25 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.huaban.analysis.jieba.JiebaSegmenter;
 import com.huaban.analysis.jieba.SegToken;
-import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
+import org.xjt.blog.common.CacheConstants;
 import org.xjt.blog.entity.TBlog;
 import org.xjt.blog.entity.TBlogTags;
 import org.xjt.blog.mapper.TBlogMapper;
 import org.xjt.blog.mapper.TBlogTagsMapper;
 import org.xjt.blog.service.TBlogService;
+import org.xjt.blog.utils.HttpUtils;
 import org.xjt.blog.utils.RedisUtils;
 import org.xjt.blog.utils.RespBean;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -315,5 +317,29 @@ public class TBlogServiceImpl implements TBlogService {
         }
 
         return RespBean.ok("ok",wordsList);
+    }
+
+    @Value("${juhe.todayOnhistory.key}")
+    private String todayOnhistoryKey;
+
+    @Override
+    public Map todayHistoryEvent() {
+        Map map = null;
+        String format = DateUtil.format(LocalDateTime.now(), "M/d");
+        String key = CacheConstants.TODAYHISTORYEVENT + "::" + format;
+        Object cacheMap = redisUtils.get(key);
+
+        if(ObjectUtils.isEmpty(cacheMap)){
+            String url = "http://v.juhe.cn/todayOnhistory/queryEvent.php?key=" + todayOnhistoryKey + "&date=" + format;
+            String s = HttpUtils.sendGet(url);
+            map = JSON.parseObject(s, HashMap.class);
+            log.warn("todayOnhistory::url=={},map={}",url,map);
+
+            redisUtils.set(key,map);
+
+            return map;
+        }else{
+            return cacheMap instanceof Map?(Map)cacheMap:null;
+        }
     }
 }

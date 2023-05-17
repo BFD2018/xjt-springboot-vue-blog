@@ -13,6 +13,7 @@ import org.xjt.blog.service.TBlogService;
 import org.xjt.blog.utils.RespBean;
 
 import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -21,6 +22,20 @@ public class TBlogController {
     @Autowired
     private TBlogService tBlogService;
 
+    /*
+    * -------------------------------------------------------------->前台请求
+    * */
+    //聚合数据-历史上的今天
+    @GetMapping("/front/juhe/todayevent")
+    public RespBean juheTodayHistoryEvent(){
+        Map map = tBlogService.todayHistoryEvent();
+
+        return RespBean.ok("ok",map);
+    }
+
+    /*
+    * -------------------------------------------------------------->后台请求
+    * */
     @GetMapping("/getByPage")
     @ApiOperation("博客分页查询")
     @ApiImplicitParams({
@@ -37,8 +52,8 @@ public class TBlogController {
                                  @RequestParam(value = "flag",required = false) String flag,
                                  @RequestParam(value = "share_statement",required = false) Boolean share_statement,
                                  @RequestParam(value = "is_delete",required = false) Boolean is_delete){
-        log.info("current="+current);
-        log.info("size="+size);
+        log.debug("current="+current);
+        log.debug("size="+size);
         return tBlogService.getBlogsByPage(current, size,published,flag,share_statement,is_delete);
     }
 

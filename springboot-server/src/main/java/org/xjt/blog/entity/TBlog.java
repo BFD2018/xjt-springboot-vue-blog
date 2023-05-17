@@ -24,7 +24,7 @@ public class TBlog implements Serializable {
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     @ApiModelProperty(value = "博客id")
     @TableId(type = IdType.AUTO)
-    private int id;
+    private Long id;
 
     @ApiModelProperty(value = "标题")
     private String title;

@@ -2,7 +2,7 @@
   <div class="login-view">
     <el-card class="login-card">
       <div slot="header" class="clearfix">
-        <div class="my-title">小熊博客登录</div>
+        <div class="my-title">小熊博客登录入口</div>
       </div>
       <el-form
         :model="ruleForm"
@@ -12,15 +12,15 @@
         label-position="left"
         class="demo-ruleForm">
         <el-form-item label="用户名" prop="username">
-          <el-input v-model="ruleForm.username"></el-input>
+          <el-input size="medium" v-model="ruleForm.username"></el-input>
         </el-form-item>
         <el-form-item label="密码" prop="password">
-          <el-input v-model="ruleForm.password"></el-input>
+          <el-input size="medium" type="password" v-model="ruleForm.password"></el-input>
         </el-form-item>
         <el-form-item label="验证码" prop="verify_code">
           <el-row>
             <el-col :span="15">
-              <el-input v-model="ruleForm.verify_code"></el-input>
+              <el-input size="medium" v-model="ruleForm.verify_code"></el-input>
             </el-col>
             <el-col :span="8" :offset="1">
               <el-image id="verify_captcha" @click="updateCaptcha"
@@ -32,11 +32,11 @@
         </el-form-item>
 
         <el-row>
-          <el-col :offset="16" :span="3">
-            <el-button type="primary" @click="submitForm('ruleForm')">登录</el-button>
+          <el-col :offset="14" :span="3">
+            <el-button type="success" size="medium" @click="submitForm('ruleForm')">登录</el-button>
           </el-col>
-          <el-col :offset="1" :span="3">
-            <el-button type="success" @click="$router.push('/toRegister')">去注册</el-button>
+          <el-col :offset="2" :span="3">
+            <el-button type="warning" size="medium" @click="$router.push('/toRegister')">注册</el-button>
           </el-col>
         </el-row>
       </el-form>
@@ -129,14 +129,14 @@
   }
 
   .login-card {
-    width: 500px;
-    height: 400px;
+    width: 420px;
+    height: 340px;
     position: absolute;
     left: 0;
     right: 0;
     top: 0;
     bottom: 0;
     margin: auto;
-    padding: 0 20px;
+    padding: 0 10px;
   }
 </style>
