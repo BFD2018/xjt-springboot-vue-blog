@@ -1,6 +1,7 @@
 package org.xjt.blog.service;
 
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import org.xjt.blog.entity.TBlog;
 import org.xjt.blog.utils.RespBean;
 
@@ -8,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public interface TBlogService {
-    RespBean getBlogsByPage(Integer current, Integer size, Boolean published, String flag, Boolean share_statement, Boolean is_delete);
+    IPage<TBlog> getBlogsByPage(Integer current, Integer size, Boolean published, String flag, Boolean share_statement, Boolean is_delete);
 
     RespBean getBlogsByPageHelper(Integer current, Integer size,String type_id, Boolean published, String flag, Boolean share_statement, Boolean is_delete);
 

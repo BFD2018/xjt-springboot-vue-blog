@@ -1,13 +1,17 @@
 package org.xjt.blog;
 
 import lombok.extern.slf4j.Slf4j;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Slf4j
+@MapperScan("org.xjt.blog.mapper")  //mapper扫描包
+@EnableTransactionManagement        //开启事务
 @SpringBootApplication
-@EnableCaching
+@EnableCaching      //开启基于注解的缓存
 public class XiongBlogApplication {
     public static void main( String[] args ) {
         SpringApplication.run(XiongBlogApplication.class,args);

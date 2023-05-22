@@ -12,6 +12,8 @@ import com.huaban.analysis.jieba.SegToken;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import org.xjt.blog.common.CacheConstants;
@@ -31,6 +33,7 @@ import java.util.Map;
 
 @Slf4j
 @Service
+@CacheConfig(cacheNames = "blogsevice")
 public class TBlogServiceImpl implements TBlogService {
     @Autowired
     private TBlogMapper tBlogMapper;
@@ -42,8 +45,9 @@ public class TBlogServiceImpl implements TBlogService {
     private RedisUtils redisUtils;
 
 
+    @Cacheable(key = "blog-blogsByPage")
     @Override
-    public RespBean getBlogsByPage(Integer current, Integer size, Boolean published, String flag, Boolean share_statement, Boolean is_delete) {
+    public IPage<TBlog> getBlogsByPage(Integer current, Integer size, Boolean published, String flag, Boolean share_statement, Boolean is_delete) {
         Page<TBlog> tBlogPage = new Page<>(current, size);
         QueryWrapper<TBlog> wrapper = new QueryWrapper<>();
         IPage<TBlog> tBlogIPage = null;

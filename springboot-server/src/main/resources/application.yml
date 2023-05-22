@@ -53,6 +53,13 @@ aliyun:
     bucketName: xiong-test-srt
     fileHost: files
 
+# Swagger配置
+swagger:
+  # 是否开启swagger
+  enabled: true
+  # 请求前缀
+  pathMapping: /dev-api
+
 --- #---------------------聚合数据 （历史上的今天）---------------------------
 juhe:
   todayOnhistory:
