@@ -67,6 +67,9 @@ Vue.use(VueLazyload, {		  //options配置项
   attempt: 3
 })
 
+import plugins from './plugins/index.js' // plugins
+Vue.use(plugins)
+
 new Vue({
   router: routers,
   store,

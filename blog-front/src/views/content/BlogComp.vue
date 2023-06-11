@@ -3,31 +3,31 @@
 		<el-card class="blog-card my-marginTop10">
 			<el-row type="flex" :gutter="30">
 				<el-col style="width: 320px;height: 180px;border:1px solid #ddd;overflow: hidden;border-radius: 8px;padding: 10px;">
-          <img v-lazy="blogInfo.first_picture"  style="width: 100%;height: 100%;" alt="">
+          <img v-lazy="blogInfo.firstPicture"  style="width: 100%;height: 100%;" alt="">
 				</el-col>
 
 				<el-col :span="18">
 					<el-row>
 						<!-- 根据shareStatement属性判断文章是否为草稿 -->
-						<el-button size="mini" v-if="!blogInfo.share_statement"
+						<el-button size="mini" v-if="!blogInfo.shareStatement"
 											 type="warning" icon="el-icon-edit" circle></el-button>
-							<span @click="$router.push(`/blog/detail/${blogInfo.bid}`)"
+							<span @click="gotoBlogDetail(blogInfo.id)"
                     class="my-medium-title">{{blogInfo.title}}</span>
 					</el-row>
 
 					<div style="margin-top: 15px;" class="my-flex">
-						<div style="margin-right: 10px;" v-if="blogInfo.is_delete">
+						<div style="margin-right: 10px;" v-if="blogInfo.isDelete">
 							<el-tag size="mini"   type="danger">已删除</el-tag>
 						</div>
-						<div style="margin-right: 10px;" v-if="!blogInfo.share_statement">
+						<div style="margin-right: 10px;" v-if="!blogInfo.shareStatement">
 							<el-tag size="mini"   type="warning">草稿
 							</el-tag>
 						</div>
-						<div style="margin-right: 10px;"  v-if="blogInfo.share_statement" >
+						<div style="margin-right: 10px;"  v-if="blogInfo.shareStatement" >
 							<el-tag size="mini">{{blogInfo.flag}}
 							</el-tag>
 						</div>
-						<div style="margin-right: 20px;"  v-if="blogInfo.share_statement" >
+						<div style="margin-right: 20px;"  v-if="blogInfo.shareStatement" >
 							<el-tag size="mini" type="info">
 								{{blogInfo.published == 'false' ? '私密' : '公开'}}
 							</el-tag>
@@ -35,7 +35,7 @@
 						<div style="margin-right: 20px;"><i class="el-icon-view"> {{blogInfo.views}} </i>
 						</div>
 						<div style="margin-right: 20px;"><i class="el-icon-chat-square">
-							{{blogInfo.comment_count}} </i>
+							{{blogInfo.commentCount}} </i>
 						</div>
 
 						<div class="my-flex-span1" style="margin-right: 20px;" ><i class="el-icon-date"> {{blogInfo.create_time | filterFormatDate(that)}}</i></div>
@@ -68,7 +68,11 @@
 			}
 		},
 		methods:{
-
+      gotoBlogDetail(blogid){
+        this.$cache.session.setJSON("currentBlogDetail",this.blogInfo)
+        //this.$cache.session.set("currentBlogDetail",this.blogInfo)
+        this.$router.push(`/blog/detail/${blogid}`)
+      }
 		},
 	}
 </script>

@@ -287,4 +287,13 @@ public class TUserController {
     public RespBean handleSave(@RequestBody TUserRole tUserRole){
         return tUserRoleService.add(tUserRole);
     }
+
+
+    //通过id获取用户信息
+    @GetMapping("/byId")
+    @ResponseBody
+    public RespBean getUserById(@RequestParam("userId") String userId){
+        TUser tUser = tUserService.getUserById(userId);
+        return RespBean.ok("ok",tUser);
+    }
 }

@@ -128,4 +128,13 @@ public class TUserServiceImpl implements TUserService {
 
         return user;
     }
+
+    @Override
+    public TUser getUserById(String userId) {
+        TUser tUser = tUserMapper.selectById(userId);
+        tUser.setPassword("");
+
+        return tUser;
+
+    }
 }

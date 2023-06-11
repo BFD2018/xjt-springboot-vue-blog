@@ -1,51 +1,51 @@
 <template>
   <div class="blog-detail-view">
-    <el-card class="blog-card">
-      <div slot="header" class="clearfix">
+    <div class="card card-outline card-default">
+      <div class="card-header">
         <el-row type="flex" class="baseInfo" v-if="blogInfo != null" style="height: 60px;line-height: 60px;">
           <el-col :span="2">
-            <el-image
-              class="my-border"
-              style="width: 60px;height: 60px;"
-              :src="blogInfo.avatar | filterImgUrl(that)"
-              fit="cover"></el-image>
+            <img
+                class="my-border"
+                style="width: 60px;height: 60px;"
+                v-lazy="blogAuthorInfo.avatar"></img>
           </el-col>
-          <el-col :span="1">{{blogInfo.username}}</el-col>
-          <el-col :span="4">
-            <i class="el-icon-date"> {{blogInfo.create_time | filterFormatDateTime(that)}}</i></el-col>
+          <el-col :span="1">{{ blogAuthorInfo.username }}</el-col>
+          <el-col :span="6" :offset="1">
+            <i class="el-icon-date"> {{ blogInfo.createTime | filterFormatDateTime(that) }}</i></el-col>
           <el-col :span="1">
-            <i class="el-icon-view"> {{blogInfo.views}}</i></el-col>
-          <el-col :span="1">
-            <i class="el-icon-chat-square"> {{blogInfo.comment_count}} </i></el-col>
-          <el-col :span="2" :offset="14">
+            <i class="el-icon-view"> {{ blogInfo.views }}</i></el-col>
+          <el-col :span="2">
+            <i class="el-icon-chat-square"> {{ blogInfo.commentCount }} </i></el-col>
+          <el-col :span="2" :offset="8">
             <el-button type="info" size="mini" @click="$router.back(-1)">
               <i class="el-icon-d-arrow-right">返回</i></el-button>
           </el-col>
         </el-row>
       </div>
 
-      <div class="blog-content my-padding">
-        <el-image
-          class="my-border"
-          style="width: 100%;height: 260px;"
-          :src="blogInfo.first_picture | filterImgUrl(that)"
-          fit="cover"></el-image>
-        <div class="my-title my-marginTop20 my-middle">{{blogInfo.title}}</div>
+      <div class="card-body blog-content my-padding">
+        <div class="blogFirstPicture" style="margin-bottom: 20px;">
+          <img
+              class="my-border"
+              style="width: 100%;height: 320px;"
+              v-lazy="blogInfo.firstPicture"></img>
+        </div>
+
+        <div class="my-title my-middle">{{ blogInfo.title }}</div>
 
         <div class="tags my-middle my-marginTop20">
-          <el-tag type="success">{{blogInfo.flag}}</el-tag>
-          <el-tag type="success" class="my-marginLeft10">{{blogInfo.type_name}}</el-tag>
+          <el-tag type="success">{{ blogInfo.flag }}</el-tag>
         </div>
 
         <div class="my-marginTop20">
           <mavon-editor
-            :value="blogInfo.content"
-            defaultOpen="preview"
-            :boxShadow="false"
-            style="z-index:1;height:80vh"
-            :editable="false"
-            :subfield="false"
-            :toolbarsFlag="false">
+              :value="blogInfo.content"
+              defaultOpen="preview"
+              :boxShadow="false"
+              style="z-index:1;height:120vh"
+              :editable="false"
+              :subfield="false"
+              :toolbarsFlag="false">
           </mavon-editor>
         </div>
 
@@ -56,7 +56,8 @@
           <el-card class="showComments-card my-marginTop10" style="border-top: 2px solid lightskyblue">
             <div slot="header" class="clearfix">
               <span class="my-title">评论</span>
-              <el-button style="float: right; padding: 3px 0" type="text" @click="handelReplyBtn('-1')">评论博客</el-button>
+              <el-button style="float: right; padding: 3px 0" type="text" @click="handelReplyBtn('-1')">评论博客
+              </el-button>
             </div>
 
             <div class="all-comments-container" style="border-left: 2px solid skyblue;padding-left: 10px;">
@@ -67,18 +68,18 @@
                     <el-col style="width: 120px;">
                       <div>
                         <el-image
-                          class="my-border"
-                          style="width: 90px; height: 90px;border-radius: 50%;"
-                          :src="item1.avatar | filterImgUrl(that)">
+                            class="my-border"
+                            style="width: 90px; height: 90px;border-radius: 50%;"
+                            :src="item1.avatar | filterImgUrl(that)">
                         </el-image>
                       </div>
                     </el-col>
                     <el-col :span="20">
                       <div style=" width: 100%;">
-                        <p style="font-size: 16px;line-height: 30px;font-weight:bold;">{{item1.nickname}}</p>
-                        <p style="font-size: 13px;line-height: 30px;color: lightskyblue;">{{item1.content}}</p>
+                        <p style="font-size: 16px;line-height: 30px;font-weight:bold;">{{ item1.nickname }}</p>
+                        <p style="font-size: 13px;line-height: 30px;color: lightskyblue;">{{ item1.content }}</p>
                         <div style="font-size: 10px;font-weight: lighter;">
-                          <span style="line-height: 30px;"> {{item1.create_time|filterFormatDateTime(that)}}</span>
+                          <span style="line-height: 30px;"> {{ item1.create_time|filterFormatDateTime(that) }}</span>
                           <span style="margin-left: 10px;line-height: 30px;" @click="handelReplyBtn(item1)">
 														<el-link style="font-size: 5px;" :underline="false">回复</el-link>
 													</span>
@@ -96,20 +97,21 @@
                       <el-col style="width: 100px">
                         <div style="padding-left: 10px;">
                           <el-image
-                            style="width: 80px; height: 80px;border-radius: 50%;border: 1px solid #ddd;"
-                            :src="item2.avatar | filterImgUrl(that)">
+                              style="width: 80px; height: 80px;border-radius: 50%;border: 1px solid #ddd;"
+                              :src="item2.avatar | filterImgUrl(that)">
                           </el-image>
                         </div>
                       </el-col>
                       <el-col :span="20" style="background-color: #eee;margin-left: 10px;padding: 5px;">
                         <div style=" width: 100%;">
-                          <span style="font-size: 16px;line-height: 26px;font-weight:bold;">{{item2.nickname}}</span>
+                          <span style="font-size: 16px;line-height: 26px;font-weight:bold;">{{ item2.nickname }}</span>
                           <span
-                            style="font-size: 14px;line-height: 26px;font-weight: normal;color: #007eff;margin-left: 10px;">@{{item2.parent_comment_nickname}}</span>
-                          <p style="font-size: 12px;line-height: 26px;">{{item2.content}}</p>
+                              style="font-size: 14px;line-height: 26px;font-weight: normal;color: #007eff;margin-left: 10px;">@{{ item2.parent_comment_nickname }}</span>
+                          <p style="font-size: 12px;line-height: 26px;">{{ item2.content }}</p>
                         </div>
                         <div>
-                          <span style="font-size: 10px;font-weight: normal;line-height: 26px;">  {{item2.create_time|filterFormatDateTime(that)}}</span>
+                          <span
+                              style="font-size: 10px;font-weight: normal;line-height: 26px;">  {{ item2.create_time|filterFormatDateTime(that) }}</span>
                           <span style="font-size: 13px;line-height: 26px;margin-left: 10px;"
                                 @click="handelReplyBtn(item2)">
 														<el-link style="font-size: 5px;line-height: 26px;">回复</el-link>
@@ -125,12 +127,12 @@
         </div>
 
       </div>
-    </el-card>
+    </div>
 
     <el-dialog
-      title="请输入评论..."
-      :visible.sync="inputCommentDialogVisible"
-      width="30%">
+        title="请输入评论..."
+        :visible.sync="inputCommentDialogVisible"
+        width="30%">
 			<span>
 				<vue-emoji-picker @sumit_comment="submitReply"/>
 			</span>
@@ -140,96 +142,113 @@
 </template>
 
 <script>
-  import VueEmojiPicker from "@/components/v-emoji-input/VueEmojiPicker.vue";
+import VueEmojiPicker from "@/components/v-emoji-input/VueEmojiPicker.vue";
 
-  export default {
-    name: "BlogDetail",
-    components: {
-      VueEmojiPicker,
+export default {
+  name: "BlogDetail",
+  components: {
+    VueEmojiPicker,
+  },
+  data() {
+    return {
+      blogInfo: {},
+      blogAuthorInfo:{},
+      commentForm: {},		//评论表单
+      allComments: [],
+
+      currentReplyParentId: "",		//对当前评论id 进行回复
+      inputCommentDialogVisible: false,
+    }
+  },
+  methods: {
+    submitReply(val) {
+      //console.log(val);		//输入的内容
+      let params = {
+        "user_id": this.$store.state.login_user.id,
+        "content": val,
+        "blog_id": this.blogInfo.id,
+        "parent_comment_id": this.currentReplyParentId,
+      };
+      //console.log(params);
+      this.$postRequest("/comment/save", params).then(res => {
+        console.log(res);
+        this.currentReplyParentId = "";
+        if (res.data.status === 200) {
+          this.$notify.success("评论成功!");
+          this.inputCommentDialogVisible = false;
+          document.location.reload();
+        }
+      })
     },
-    data() {
-      return {
-        blogInfo: {},
-        commentForm: {},		//评论表单
-        allComments: [],
-
-        currentReplyParentId: "",		//对当前评论id 进行回复
-        inputCommentDialogVisible: false,
+    handelReplyBtn(item) {
+      let login_user = this.$store.state.login_user;
+      if (Object.keys(login_user).length > 0) {
+        this.inputCommentDialogVisible = true;
+        //当前评论id
+        if (item === '-1') {
+          //对博客评论
+          this.currentReplyParentId = "-1";
+        } else {
+          //回复
+          this.currentReplyParentId = item.id;
+        }
+      } else {
+        this.$message.warning("尚未登录，请先去登录！");
+        this.$router.push("/toLogin");
       }
     },
-    methods: {
-      submitReply(val) {
-        //console.log(val);		//输入的内容
-        let params = {
-          "user_id": this.$store.state.login_user.id,
-          "content": val,
-          "blog_id": this.blogInfo.bid,
-          "parent_comment_id": this.currentReplyParentId,
-        };
-        //console.log(params);
-        this.$postRequest("/comment/save", params).then(res => {
-          // console.log(res);
-          this.currentReplyParentId = "";
-          if (res.data.status === 200) {
-            this.$notify.success("评论成功!");
-            this.inputCommentDialogVisible = false;
-            document.location.reload();
-          }
-        })
-      },
-      handelReplyBtn(item) {
-        let login_user = this.$store.state.login_user;
-        if (Object.keys(login_user).length > 0) {
-          this.inputCommentDialogVisible = true;
-          //当前评论id
-          if (item === '-1') {
-            //对博客评论
-            this.currentReplyParentId = "-1";
-          } else {
-            //回复
-            this.currentReplyParentId = item.id;
-          }
-        } else {
-          this.$message.warning("尚未登录，请先去登录！");
-          this.$router.push("/toLogin");
+
+    initBlogDetail(blog_id) {
+      this.$getRequest("/blog/detail?blog_id=" + blog_id).then(res => {
+        console.log(res);
+        if (res.data.status === 200) {
+          this.blogInfo = res.data.obj;
         }
-      },
-
-      initBlogDetail(blog_id){
-        this.$getRequest("/blog/detail?blog_id="+blog_id).then(res => {
-          console.log(res);
-          if(res.data.status === 200){
-            this.blogInfo = res.data.obj;
-          }
-        });
-      },
-
-      initBlogAllComments(blog_id){
-        this.$getRequest("/comment/getAllByBlogId?blog_id=" + blog_id).then(res => {
-          console.log(res);
-          if (res.data.status === 200) {
-            this.allComments.push(...res.data.obj);
-          }
-        })
-      },
+      });
     },
-    created() {
-      const blog_id = this.$route.params.blog_id;
-      this.initBlogDetail(blog_id);
 
-      this.initBlogAllComments(blog_id);
+    //博客作者信息
+    initBlogAuthorInfo(userId){
+      this.$getRequest("/user/byId?userId=" + userId).then(res => {
+        //console.log(res);
+        if (res.data.status === 200) {
+          this.blogAuthorInfo = res.data.obj;
+        }
+      });
+    },
+
+    initBlogAllComments(blog_id) {
+      this.$getRequest("/comment/getAllByBlogId?blog_id=" + blog_id).then(res => {
+        //console.log(res);
+        if (res.data.status === 200) {
+          this.allComments.push(...res.data.obj);
+        }
+      })
+    },
+  },
+  created() {
+    const blog_id = this.$route.params.blog_id;
+
+    this.blogInfo = this.$cache.session.getJSON("currentBlogDetail")
+    if(this.blogInfo == null){
+      this.initBlogDetail(blog_id)
     }
+
+    this.initBlogAuthorInfo(this.blogInfo.userId);
+
+    this.initBlogAllComments(blog_id);
   }
+}
 </script>
 
 <style scoped>
-  .blog-detail-view {
-    width: 80%;
-    margin: auto;
-  }
+.blog-detail-view {
+  width: 80%;
+  margin: auto;
+}
 
-  .post-comment-card {
-    width: 100%;
-    height: 440px;
-  }
+.post-comment-card {
+  width: 100%;
+  height: 440px;
+}
 </style>

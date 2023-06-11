@@ -5,7 +5,7 @@
       <div class="card card-default card-outline">
         <el-carousel height="360px" direction="vertical">
           <el-carousel-item v-for="(item,index) in carouselList" :key="index">
-            <div class="carouselItem" @click="$router.push(`/blog/detail/${item.id}`)">
+            <div class="carouselItem" @click="gotoBlogDetail(item)">
               <img v-lazy="item.firstPicture" alt="" width="100%" height="100%">
               <div class="title">{{item.title}}</div>
             </div>
@@ -43,7 +43,7 @@
     </div>
 
     <div class="layout-right" v-if="$store.state.login_user">
-      <div class="card">
+      <div class="card" style="height: 1000px;overflow-y: scroll;">
         <div class="card-header">
           <div class="card-title">历史上的今天</div>
           <div class="card-tools">
@@ -194,6 +194,10 @@ export default {
     },
     blogTypeMore() {
 
+    },
+    gotoBlogDetail(clickBlogInfo){
+      this.$cache.session.setJSON("currentBlogDetail",clickBlogInfo)
+      this.$router.push(`/blog/detail/${clickBlogInfo.id}`)
     },
 
     /*分页*/

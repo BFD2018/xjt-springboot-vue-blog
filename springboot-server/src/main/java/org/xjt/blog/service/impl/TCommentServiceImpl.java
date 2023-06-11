@@ -28,7 +28,7 @@ public class TCommentServiceImpl implements TCommentService {
     //存放迭代找出的所有子代回复的集合
     private List<Map<String, Object>> tempReplys = new ArrayList<>();
 
-    @CachePut
+    @CachePut(value = "saveComment",key = "#tComment")
     @Override
     public int save(TComment tComment) {
         Integer ret = tCommentMapper.insert(tComment);

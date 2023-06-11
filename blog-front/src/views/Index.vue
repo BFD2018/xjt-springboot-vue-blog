@@ -8,16 +8,16 @@
           </div>
         </el-col>
 
-        <el-col :span="17">
+        <el-col :span="14">
           <el-menu
             :default-active="headerNavActive"
             router
             class="el-menu-demo"
             mode="horizontal"
             @select="handleSelect"
-            background-color="#545c64"
-            text-color="#fff"
-            active-text-color="#ffd04b">
+            background-color="#ffffff"
+            text-color="#303133"
+            active-text-color="#409EFF">
             <el-menu-item index="/blog/list">博客列表</el-menu-item>
             <el-menu-item index="/blog/type">分类专栏</el-menu-item>
             <el-menu-item index="/blog/tag">文章标签</el-menu-item>
@@ -25,20 +25,20 @@
             <el-menu-item index="/blog/links">友链</el-menu-item>
             <el-menu-item index="/blog/about">关于我</el-menu-item>
             <el-menu-item index="/blog/netdisk">个人网盘</el-menu-item>
-
-            <el-menu-item>
-              <el-input
-                size="medium "
-                placeholder="请输入内容"
-                suffix-icon="el-icon-search"
-                @change="handleSearch"
-                v-model="inputSearchKey">
-              </el-input>
-            </el-menu-item>
           </el-menu>
         </el-col>
 
-        <el-col :span="4" style="text-align: right;line-height: 60px;">
+        <el-col :span="5" style="line-height: 60px;">
+          <el-input
+              size="small"
+              placeholder="请输入内容"
+              suffix-icon="el-icon-search"
+              @change="handleSearch"
+              v-model="inputSearchKey">
+          </el-input>
+        </el-col>
+
+        <el-col :span="1" :offset="1" style="text-align: right;line-height: 60px;">
           <div v-if="Object.keys($store.state.login_user).length > 0">
             <el-dropdown class="userinfo-dropdown" @command="handleCommand">
 								<span class="el-dropdown-link">
@@ -92,7 +92,7 @@
             fit="contain"></el-image>
         </div>
         <div class="item website-info">
-          <h3>站点信息</h3>
+          <h5>站点信息</h5>
           <p><b>文章总数：</b>13篇</p>
           <p><b>访问总数：</b>174次</p>
           <p><b>评论总数：</b>19条</p>
@@ -165,11 +165,12 @@
   #header-outer {
     width: 100%;
     height: 60px;
-    background-color: rgb(84, 92, 100);
+    background-color: #ffffff;
     position: fixed;
     top: 0;
     left: 0;
     z-index: 999;
+    border-bottom: 1px solid #dddddd;
 
     .el-row {
       margin: 0 20px;
@@ -183,7 +184,6 @@
   .middle-container {
     width: 90vw;
     margin: 80px auto 20px auto;
-    /*border: 1px solid red;*/
   }
 
   #footer-outer {
@@ -193,7 +193,7 @@
 
     .footer-content {
       color: aliceblue;
-      height: 220px;
+      height: 240px;
       margin: auto;
       width: 90vw;
       display: flex;
@@ -203,7 +203,7 @@
       .item {
         flex: 1;
         text-align: center;
-        line-height: 44px;
+        line-height: 32px;
       }
     }
   }

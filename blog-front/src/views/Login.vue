@@ -1,46 +1,48 @@
 <template>
   <div class="login-view">
-    <el-card class="login-card">
-      <div slot="header" class="clearfix">
-        <div class="my-title">小熊博客登录入口</div>
+    <div class="card card-outline card-default login-card">
+      <div class="card-header">
+        <div class="my-title">熊猫博客登录入口</div>
       </div>
-      <el-form
-        :model="ruleForm"
-        :rules="rules"
-        ref="ruleForm"
-        label-width="100px"
-        label-position="left"
-        class="demo-ruleForm">
-        <el-form-item label="用户名" prop="username">
-          <el-input size="medium" v-model="ruleForm.username"></el-input>
-        </el-form-item>
-        <el-form-item label="密码" prop="password">
-          <el-input size="medium" type="password" v-model="ruleForm.password"></el-input>
-        </el-form-item>
-        <el-form-item label="验证码" prop="verify_code">
+      <div class="card-body">
+        <el-form
+            :model="ruleForm"
+            :rules="rules"
+            ref="ruleForm"
+            label-width="100px"
+            label-position="left"
+            class="demo-ruleForm">
+          <el-form-item label="用户名" prop="username">
+            <el-input size="medium" v-model="ruleForm.username"></el-input>
+          </el-form-item>
+          <el-form-item label="密码" prop="password">
+            <el-input size="medium" type="password" v-model="ruleForm.password"></el-input>
+          </el-form-item>
+          <el-form-item label="验证码" prop="verify_code">
+            <el-row>
+              <el-col :span="15">
+                <el-input size="medium" v-model="ruleForm.verify_code" @keydown.enter="submitForm('ruleForm')"></el-input>
+              </el-col>
+              <el-col :span="8" :offset="1">
+                <el-image id="verify_captcha" @click="updateCaptcha"
+                          style="width: 100%; height: 48px"
+                          src="/api/user/getCaptcha"
+                          fit="scale-down"></el-image>
+              </el-col>
+            </el-row>
+          </el-form-item>
+
           <el-row>
-            <el-col :span="15">
-              <el-input size="medium" v-model="ruleForm.verify_code" @keydown.enter="submitForm('ruleForm')"></el-input>
+            <el-col :offset="14" :span="3">
+              <el-button type="success" size="medium" @click="submitForm('ruleForm')">登录</el-button>
             </el-col>
-            <el-col :span="8" :offset="1">
-              <el-image id="verify_captcha" @click="updateCaptcha"
-                        style="width: 100%; height: 48px"
-                        src="/api/user/getCaptcha"
-                        fit="scale-down"></el-image>
+            <el-col :offset="2" :span="3">
+              <el-button type="warning" size="medium" @click="$router.push('/toRegister')">注册</el-button>
             </el-col>
           </el-row>
-        </el-form-item>
-
-        <el-row>
-          <el-col :offset="14" :span="3">
-            <el-button type="success" size="medium" @click="submitForm('ruleForm')">登录</el-button>
-          </el-col>
-          <el-col :offset="2" :span="3">
-            <el-button type="warning" size="medium" @click="$router.push('/toRegister')">注册</el-button>
-          </el-col>
-        </el-row>
-      </el-form>
-    </el-card>
+        </el-form>
+      </div>
+    </div>
 
     <!--粒子特效-->
     <vue-particles
@@ -129,8 +131,8 @@
   }
 
   .login-card {
-    width: 450px;
-    height: 360px;
+    width: 500px;
+    height: 400px;
     position: absolute;
     left: 0;
     right: 0;
