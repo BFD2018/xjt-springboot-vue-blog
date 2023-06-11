@@ -3,6 +3,8 @@ package org.xjt.blog.service;
 import org.xjt.blog.entity.TType;
 import org.xjt.blog.utils.RespBean;
 
+import java.util.List;
+
 /**
  * @author xiong
  * @ClassName TTypeService.java
@@ -12,7 +14,7 @@ import org.xjt.blog.utils.RespBean;
 public interface TTypeService {
     RespBean saveType(String typeName);
 
-    RespBean getAllType();
+    List<TType> getAllType();
 
     RespBean getTypeByPage(Integer currentPage, Integer pageSize);
 

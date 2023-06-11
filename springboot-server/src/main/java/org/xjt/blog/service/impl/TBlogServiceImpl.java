@@ -5,18 +5,20 @@ import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
 import com.huaban.analysis.jieba.JiebaSegmenter;
 import com.huaban.analysis.jieba.SegToken;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 import org.xjt.blog.common.CacheConstants;
+import org.xjt.blog.common.Constants;
 import org.xjt.blog.entity.TBlog;
 import org.xjt.blog.entity.TBlogTags;
 import org.xjt.blog.mapper.TBlogMapper;
@@ -24,7 +26,6 @@ import org.xjt.blog.mapper.TBlogTagsMapper;
 import org.xjt.blog.service.TBlogService;
 import org.xjt.blog.utils.HttpUtils;
 import org.xjt.blog.utils.RedisUtils;
-import org.xjt.blog.utils.RespBean;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -45,76 +46,71 @@ public class TBlogServiceImpl implements TBlogService {
     private RedisUtils redisUtils;
 
 
-    @Cacheable(key = "blog-blogsByPage")
+
+
+    @Cacheable(value = "blogsByPage",key = "#current")
     @Override
     public IPage<TBlog> getBlogsByPage(Integer current, Integer size, Boolean published, String flag, Boolean share_statement, Boolean is_delete) {
+        if(current < 1){
+            current  = 1;
+        }
+        if(size < 1){
+            size  = 6;
+        }
         Page<TBlog> tBlogPage = new Page<>(current, size);
         QueryWrapper<TBlog> wrapper = new QueryWrapper<>();
         IPage<TBlog> tBlogIPage = null;
 
-        boolean exists = redisUtils.exists("blog-blogsByPage");
-
-        if(current > 1 || !exists || ObjectUtils.isEmpty(redisUtils.get("blog-blogsByPage"))){
-            System.out.println("------------>从数据库中查询");
-            if (published != null) {
-                wrapper.eq("published", published);
-            }
-            if (flag != null) {
-                wrapper.eq("flag", flag);
-            }
-            if (share_statement != null) {
-                wrapper.eq("share_statement", share_statement);
-            }
-            if (is_delete != null) {
-                wrapper.eq("is_delete", is_delete);
-            }
-            wrapper.orderByDesc("update_time");
-
-            tBlogIPage = tBlogMapper.selectPage(tBlogPage, wrapper);
-            System.out.println(tBlogIPage);
-
-            redisUtils.set("blog-blogsByPage", tBlogIPage);
-        }else{
-            System.out.println("============>从redis中获取数据");
-            tBlogIPage = (IPage<TBlog>)redisUtils.get("blog-blogsByPage");
+        log.debug("------------>从数据库中查询");
+        if (published != null) {
+            wrapper.eq("published", published);
         }
+        if (flag != null) {
+            wrapper.eq("flag", flag);
+        }
+        if (share_statement != null) {
+            wrapper.eq("share_statement", share_statement);
+        }
+        if (is_delete != null) {
+            wrapper.eq("is_delete", is_delete);
+        }
+        wrapper.orderByDesc("update_time");
 
-        return RespBean.ok("ok",tBlogIPage);
+        tBlogIPage = tBlogMapper.selectPage(tBlogPage, wrapper);
+
+        return tBlogIPage;
 
     }
 
 
+    @Cacheable(value = "getBlogsByPageHelper")
     @Override
-    public RespBean getBlogsByPageHelper(Integer current, Integer size, String type_id,Boolean published, String flag, Boolean share_statement, Boolean is_delete) {
-        PageHelper.startPage(current,size);
-        List<Map<String,String>> list = tBlogMapper.getBlogsByPageHelper(type_id,published,flag,share_statement,is_delete);
-        if(ObjectUtils.isEmpty(list)){
-            return RespBean.error("没有找到任何博客");
-        }else{
-            PageInfo<Map<String,String>> pageInfo = new PageInfo<Map<String,String>>(list);
+    public List<Map<String,String>> getBlogsByPageHelper(int current, int size, String type_id,Boolean published, String flag, Boolean share_statement, Boolean is_delete) {
+        List<Map<String,String>> list = tBlogMapper.getBlogsByPageHelper(current,size,type_id,published,flag,share_statement,is_delete);
 
-            return RespBean.ok("ok",pageInfo);
-        }
+        return list;
     }
 
+    @Cacheable(value = "getBlogByTitle",key = "#title")
     @Override
-    public RespBean getBlogByTitle(String title) {
-        Page<TBlog> tBlogPage = new Page<>();
-
+    public IPage<TBlog> getBlogByTitle(String title) {
+        Page<TBlog> tBlogPage = new Page<TBlog>(Constants.CurrentPage, Constants.PageSize);
         QueryWrapper<TBlog> wrapper = new QueryWrapper<>();
+        IPage<TBlog> tBlogIPage = null;
+
         wrapper.like("title", title);
         wrapper.eq("published", 1);
 
-        IPage<TBlog> tBlogIPage = tBlogMapper.selectPage(tBlogPage, wrapper);
-        if (ObjectUtils.isEmpty(tBlogIPage.getRecords())) {
-            return RespBean.warn("没有找到类似title的文章");
-        } else {
-            return RespBean.ok(tBlogIPage.getRecords());
-        }
+        tBlogIPage = tBlogMapper.selectPage(tBlogPage, wrapper);
+
+
+        return tBlogIPage;
     }
 
+    @Transactional
+    @CachePut(value = "saveBlog",key = "#params.title")
     @Override
-    public RespBean saveBlog(HashMap<String, Object> params) {
+    public TBlog saveBlog(HashMap<String, Object> params) {
         TBlog tBlog = new TBlog();
 
         String title = (String) params.get("title");
@@ -161,42 +157,38 @@ public class TBlogServiceImpl implements TBlogService {
         }
 
         if (insert1 > 0 && insert2 > 0) {
-            return RespBean.ok("成功创建了一篇博客");
+            return tBlog;
         } else {
-            return RespBean.error("创建博客失败...");
+            return null;
         }
 
     }
 
+    @Cacheable(value = "blogById",key = "#bid")
     @Override
-    public RespBean getBlogById(String bid) {
-        try {
-            Object obj = tBlogMapper.findBlogById(bid);
+    public Object getBlogById(String bid) {
+        Object obj = null;
 
-            if (ObjectUtils.isEmpty(obj)) {
-                return RespBean.error("没有找到id=" + bid + " 的博客");
-            } else {
-                return RespBean.ok(obj);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return RespBean.error("查询失败");
+        obj = tBlogMapper.findBlogById(bid);
+
+        if (ObjectUtils.isEmpty(obj)) {
+            obj = "没有找到id=" + bid + " 的博客";
         }
+
+        return obj;
     }
 
+    @CacheEvict(value = "blogById",key = "#bid")
     @Override
-    public RespBean deleteBlogById(String bid) {
+    public int deleteBlogById(String bid) {
         int i = tBlogMapper.deleteById(bid);
 
-        if (i > 0) {
-            return RespBean.ok("成功删除博客");
-        } else {
-            return RespBean.error("删除博客失败...");
-        }
+        return i;
     }
 
+    @CachePut(value = "blog",key = "#params.id")
     @Override
-    public RespBean updateBlog(HashMap<String, Object> params) {
+    public TBlog updateBlog(HashMap<String, Object> params) {
         TBlog tBlog = new TBlog();
 
         String id = (String) params.get("id");
@@ -233,67 +225,59 @@ public class TBlogServiceImpl implements TBlogService {
         log.warn("update==="+update);
 
         if (update < 0) {
-            return RespBean.error("修改博客失败...");
+            return null;
         } else {
-            return RespBean.ok("成功修改博客");
+            return tBlog;
         }
     }
 
+    @Cacheable(value = "allcounts")
     @Override
-    public RespBean getBlogAllCounts() {
-        Integer count = tBlogMapper.selectCount(null);
+    public int getBlogAllCounts() {
+        int count = tBlogMapper.selectCount(null);
 
-        if (count <= 0) {
-            return RespBean.error("查询失败...");
-        } else {
-            return RespBean.ok("ok",count);
-        }
+        return count;
     }
 
+    @Cacheable(value = "blogdetail",key = "#bid")
     @Override
-    public RespBean getBlogDetailById(String bid) {
+    public TBlog getBlogDetailById(String bid) {
         try {
             Object obj = tBlogMapper.findBlogDetailById(bid);
+            Map objMap = null;
+            if(obj instanceof Map){
+                objMap = (Map) obj;
+            }
 
-            Map obj1 = (Map) obj;
-            Integer views = (Integer) obj1.get("views");
+            Integer views = (Integer) objMap.get("views");
             TBlog newBlog = new TBlog().setId(Long.valueOf(bid)).setViews(views+1);
             tBlogMapper.updateById(newBlog);
 
             if (ObjectUtils.isEmpty(obj)) {
-                return RespBean.error("没有找到id=" + bid + " 的博客");
+                return null;
             } else {
-                return RespBean.ok(obj);
+                return newBlog;
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return RespBean.error("查询失败");
+            return null;
         }
     }
 
+    @Cacheable(value = "blogCountsByType")
     @Override
-    public RespBean getBlogCountsByType() {
-        boolean exists = redisUtils.exists("blog-blogsCountByType");
+    public List<Map<String, Integer>> getBlogCountsByType() {
         List<Map<String, Integer>> ret = null;
 
-        if(!exists || ObjectUtils.isEmpty(redisUtils.get("blog-blogsCountByType"))){
-            System.out.println("--------->从数据库中获取数据");
-            ret = tBlogMapper.getBlogCountsGroupByType();
-            redisUtils.set("blog-blogsCountByType",ret);
-        }else{
-            System.out.println("============>从redis中获取数据");
-            ret = (List<Map<String, Integer>>)redisUtils.get("blog-blogsCountByType");
-        }
+        System.out.println("--------->从数据库中获取数据");
+        ret = tBlogMapper.getBlogCountsGroupByType();
 
-        if(ObjectUtils.isEmpty(ret)){
-            return RespBean.error("查询失败");
-        }else{
-            return RespBean.ok("ok",ret);
-        }
+        return ret;
     }
 
+    @Cacheable(value = "allBlogTitleToWordCloud")
     @Override
-    public RespBean getAllBlogTitleToWordCloud() {
+    public List<Map<String, Object>> getAllBlogTitleToWordCloud() {
         QueryWrapper<TBlog> wrapper = new QueryWrapper<>();
         wrapper.select("title");
         List<TBlog> blogList = tBlogMapper.selectList(wrapper);
@@ -320,30 +304,37 @@ public class TBlogServiceImpl implements TBlogService {
             });
         }
 
-        return RespBean.ok("ok",wordsList);
+        return wordsList;
     }
 
     @Value("${juhe.todayOnhistory.key}")
     private String todayOnhistoryKey;
 
+    @Cacheable(value = CacheConstants.TODAYHISTORYEVENT)
     @Override
     public Map todayHistoryEvent() {
-        Map map = null;
+        Map ret = null;
         String format = DateUtil.format(LocalDateTime.now(), "M/d");
-        String key = CacheConstants.TODAYHISTORYEVENT + "::" + format;
-        Object cacheMap = redisUtils.get(key);
 
-        if(ObjectUtils.isEmpty(cacheMap)){
-            String url = "http://v.juhe.cn/todayOnhistory/queryEvent.php?key=" + todayOnhistoryKey + "&date=" + format;
-            String s = HttpUtils.sendGet(url);
-            map = JSON.parseObject(s, HashMap.class);
-            log.warn("todayOnhistory::url=={},map={}",url,map);
+        String url = "http://v.juhe.cn/todayOnhistory/queryEvent.php?key=" + todayOnhistoryKey + "&date=" + format;
+        String s = HttpUtils.sendGet(url);
+        ret = JSON.parseObject(s, HashMap.class);
+        log.warn("todayOnhistory::url=={},map={}",url,ret);
 
-            redisUtils.set(key,map);
+        return ret instanceof Map?(Map)ret:null;
+    }
 
-            return map;
-        }else{
-            return cacheMap instanceof Map?(Map)cacheMap:null;
-        }
+    @Cacheable(value = "carouselListByCommentsViews")
+    @Override
+    public IPage<TBlog> getBlogsByCommentsViews() {
+        Page<TBlog> tBlogPage = new Page<>(1, 4);
+        QueryWrapper<TBlog> wrapper = new QueryWrapper<>();
+
+        wrapper.orderByDesc("comment_count","views");
+        IPage<TBlog> tBlogIPage = tBlogMapper.selectPage(tBlogPage, wrapper);
+
+        log.info("carouselListByCommentsViews:" + tBlogIPage.getRecords().toArray().toString());
+
+        return tBlogIPage;
     }
 }

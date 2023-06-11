@@ -1,29 +1,44 @@
 <template>
   <div class="blog-list-view">
     <div class="layout-left">
-      <div class="main-title">
-        <div class="my-left">博客</div>
-        <div class="my-right">共 {{totalBlogs}} 篇</div>
+      <!-- 轮播图      -->
+      <div class="card card-default card-outline">
+        <el-carousel height="360px" direction="vertical">
+          <el-carousel-item v-for="(item,index) in carouselList" :key="index">
+            <div class="carouselItem" @click="$router.push(`/blog/detail/${item.id}`)">
+              <img v-lazy="item.firstPicture" alt="" width="100%" height="100%">
+              <div class="title">{{item.title}}</div>
+            </div>
+          </el-carousel-item>
+        </el-carousel>
       </div>
 
-      <div class="main-content">
-        <div v-for="(item,index) in blogsList" :key="index" class="blog-item">
-          <BlogComp :blogInfo="item"></BlogComp>
+      <!-- 博客列表     -->
+      <div class="card card-default card-outline">
+        <div class="card-header main-title">
+          <div class="my-left">博客</div>
+          <div class="my-right">共 {{ totalBlogs }} 篇</div>
         </div>
-      </div>
 
-      <!--分页-->
-      <div style="margin-top: 20px;" class="my-border-padding">
-        <el-pagination
-          background
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :current-page="currentPage"
-          :page-sizes="pageSizes"
-          :page-size="pageSize"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="totalBlogs">
-        </el-pagination>
+        <div class="card-body main-content">
+          <div v-for="(item,index) in blogsList" :key="index" class="blog-item">
+            <BlogComp :blogInfo="item"></BlogComp>
+          </div>
+        </div>
+
+        <!--分页-->
+        <div style="margin-top: 20px;" class="my-border-padding">
+          <el-pagination
+              background
+              @size-change="handleSizeChange"
+              @current-change="handleCurrentChange"
+              :current-page="currentPage"
+              :page-sizes="pageSizes"
+              :page-size="pageSize"
+              layout="total, sizes, prev, pager, next, jumper"
+              :total="totalBlogs">
+          </el-pagination>
+        </div>
       </div>
     </div>
 
@@ -53,20 +68,20 @@
         <div class="clearfix my-title" slot="header">用户信息</div>
         <div class="my-middle">
           <el-image
-            class="my-border"
-            style="width: 200px;height: 200px;"
-            :src="$store.state.login_user.avatar || '' "
-            fit="cover"></el-image>
-          <p>{{$store.state.login_user.username}}</p>
-          <p>{{$store.state.login_user.description}}</p>
+              class="my-border"
+              style="width: 200px;height: 200px;"
+              :src="$store.state.login_user.avatar || '' "
+              fit="cover"></el-image>
+          <p>{{ $store.state.login_user.username }}</p>
+          <p>{{ $store.state.login_user.description }}</p>
         </div>
       </el-card>
 
       <el-card class="box-card my-marginTop10">
         <div slot="header" class="clearfix">
           <nav-bar>
-            <div slot = "left-slot">分类专栏</div>
-            <div slot = "right-slot">
+            <div slot="left-slot">分类专栏</div>
+            <div slot="right-slot">
               <i class="el-icon-more" @click="blogTypeMore"></i>
             </div>
           </nav-bar>
@@ -82,8 +97,8 @@
       <el-card class="box-card my-marginTop10">
         <div slot="header" class="clearfix">
           <nav-bar>
-            <div slot = "left-slot">热门文章</div>
-            <div slot = "right-slot">
+            <div slot="left-slot">热门文章</div>
+            <div slot="right-slot">
               <el-button type="text">TOP5</el-button>
             </div>
           </nav-bar>
@@ -91,9 +106,9 @@
         <div v-for="(item,index) in hotBlogs" :key="index">
           <div class="my-marginTop10">
             <el-tag effect="plain">{{ index + 1 }}</el-tag>
-            <span class="my-marginLeft5"><i class="el-icon-view"></i> {{item.views}}</span>
+            <span class="my-marginLeft5"><i class="el-icon-view"></i> {{ item.views }}</span>
             <br/>
-            <span class="my-mini-text">{{item.title}}</span>
+            <span class="my-mini-text">{{ item.title }}</span>
           </div>
         </div>
       </el-card>
@@ -103,136 +118,153 @@
 </template>
 
 <script>
-  import BlogComp from "./BlogComp";
-  import NavBar from "@/components/navbar/NavBar.vue"
+import BlogComp from "./BlogComp";
+import NavBar from "@/components/navbar/NavBar.vue"
 
-  export default {
-    name: "BlogList",
-    components: {
-      BlogComp,
-      NavBar,
+export default {
+  name: "BlogList",
+  components: {
+    BlogComp,
+    NavBar,
+  },
+  data() {
+    return {
+      carouselList:[],      //轮播列表（按照评论数 浏览量排序 默认4个）
+      blogsList: [],		//博客
+      typesList: [],		//分类
+      hotBlogs: [],		//热门博客
+      todayHistoryEventList: [],
+
+      //分页
+      totalBlogs: 0,
+      currentPage: 1,
+      pageSizes: [3, 6, 9, 12],
+      pageSize: 6,
+    }
+  },
+  methods: {
+    initCarouselListData(){
+      this.$getRequest("/blog/front/carousel").then(res => {
+        console.log(res);
+        this.carouselList = res.data.obj
+      })
     },
-    data() {
-      return {
-        blogsList: [],		//博客
-        typesList: [],		//分类
-        hotBlogs: [],		//热门博客
-        todayHistoryEventList:[],
+    initGetToadyHistroy() {
+      this.$getRequest("/blog/front/juhe/todayevent").then(res => {
+        //console.log(res);
+        this.todayHistoryEventList = res.data.obj.result
+      })
+    },
+    initBlogs() {
+      let baseUrl = `/blog/getByPage?current=${this.currentPage}&size=${this.pageSize}`;
+      this.$getRequest(baseUrl).then(res => {
+        console.log(res);
+        if (res.data.status === 200) {
+          this.blogsList.splice(0);
+          this.blogsList.push(...res.data.obj.records);
 
-        //分页
-        totalBlogs: 0,
-        currentPage: 1,
-        pageSizes: [3, 6, 9, 12],
-        pageSize: 6,
+          this.totalBlogs = Number(res.data.obj.total);
+
+          this.initHotBlog();
+        } else {
+          this.$message.error(res.data.msg);
+        }
+      })
+    },
+    initType() {
+      this.$getRequest("/type/all").then(res => {
+        console.log(res);
+        if (res.data.status === 200) {
+          this.typesList.push(...res.data.obj);
+          //只展示前五个
+          this.typesList.splice(5);
+        }
+      })
+    },
+    /*根据blog.views排序*/
+    initHotBlog() {
+      if (this.blogsList != null) {
+        this.hotBlogs.splice(0);
+        this.hotBlogs.push(...this.blogsList);
+        this.hotBlogs.sort(function (a, b) {
+          return b.views - a.views;
+        });
+        this.hotBlogs.splice(5);
       }
     },
-    methods: {
-      initGetToadyHistroy(){
-        this.$getRequest("/blog/front/juhe/todayevent").then(res => {
-          console.log(res);
-          this.todayHistoryEventList = res.data.obj.result
-        })
-      },
-      initBlogs() {
-        let baseUrl = `/blog/getByPageHelper?current=${this.currentPage}&size=${this.pageSize}`;
+    blogTypeMore() {
 
-        this.$getRequest(baseUrl).then(res => {
-          console.log(res);
-          if (res.data.status === 200) {
-            this.blogsList.splice(0);
-            this.blogsList.push(...res.data.obj.list);
-
-            this.totalBlogs = Number(res.data.obj.total);
-
-            this.initHotBlog();
-          } else {
-            this.$message.error(res.data.msg);
-          }
-        })
-      },
-      initType() {
-        this.$getRequest("/type/all").then(res => {
-          console.log(res);
-          if (res.data.status === 200) {
-            this.typesList.push(...res.data.obj);
-            //只展示前五个
-            this.typesList.splice(5);
-          }
-        })
-      },
-      /*根据blog.views排序*/
-      initHotBlog() {
-        if (this.blogsList != null) {
-          this.hotBlogs.splice(0);
-          this.hotBlogs.push(...this.blogsList);
-          this.hotBlogs.sort(function (a, b) {
-            return b.views - a.views;
-          });
-          this.hotBlogs.splice(5);
-        }
-      },
-      blogTypeMore() {
-
-      },
-
-      /*分页*/
-      handleSizeChange(pageSize) {
-        //console.log(`每页 ${pageSize} 条`);
-        this.pageSize = pageSize;
-        this.initBlogs()
-      },
-      handleCurrentChange(current) {
-        //console.log(`当前页: ${current}`);
-        this.currentPage = current;
-        this.initBlogs()
-      },
     },
-    created() {
-      this.initBlogs();
-      this.initType();
 
-      this.initGetToadyHistroy();
+    /*分页*/
+    handleSizeChange(pageSize) {
+      //console.log(`每页 ${pageSize} 条`);
+      this.pageSize = pageSize;
+      this.initBlogs()
+    },
+    handleCurrentChange(current) {
+      //console.log(`当前页: ${current}`);
+      this.currentPage = current;
+      this.initBlogs()
+    },
+  },
+  created() {
+    this.initCarouselListData();
+    this.initBlogs();
+    this.initType();
 
-      console.log(this.$store.state.login_user);
-    }
+    this.initGetToadyHistroy();
+
+    console.log(this.$store.state.login_user);
   }
+}
 </script>
 
 <style lang="less" scoped>
-  .blog-list-view {
-    display: flex;
+.blog-list-view {
+  display: flex;
 
-    .layout-left {
-      flex: 1;
-      box-shadow: 0 0 3px #dddddd;
-
-      .main-title {
-        margin: 10px 20px 0 20px;
-        height: 50px;
-        border-bottom: 2px solid darkcyan;
-        font-size: 26px;
-        color: darkcyan;
-        font-weight: 500;
-      }
-
-      .main-content {
-        .blog-item {
-          padding: 20px;
-          border-bottom: 1px solid #ddd;
-        }
+  .layout-left {
+    flex: 1;
+    box-shadow: 0 0 3px #dddddd;
+    .carouselItem{
+      position: relative;
+      .title{
+        font-size: 22px;
+        font-weight: lighter;
+        position: absolute;
+        left: 50px;
+        top: 20px;
+        color: rgba(255,255,255,0.8);
       }
     }
+    .main-title {
+      margin: 10px 20px 0 20px;
+      height: 50px;
+      border-bottom: 2px solid darkcyan;
+      font-size: 26px;
+      color: darkcyan;
+      font-weight: 500;
+    }
 
-    .layout-right {
-      width: 420px;
-      margin-left: 20px;
-
-      .tag-group {
-        .el-tag {
-          margin-left: 10px;
-          margin-top: 10px;
-        }
+    .main-content {
+      .blog-item {
+        padding: 20px;
+        border-bottom: 1px solid #ddd;
       }
     }
   }
+
+  .layout-right {
+    width: 420px;
+    margin-left: 20px;
+
+    .tag-group {
+      .el-tag {
+        margin-left: 10px;
+        margin-top: 10px;
+      }
+    }
+  }
+}
 </style>

@@ -30,6 +30,7 @@ public class TComment implements Serializable {
     @JsonSerialize(using = ToStringSerializer.class)        //序列化时,将Long保存为String 保留精度
     @ApiModelProperty(value = "评论id")
     @TableId(type = IdType.ID_WORKER)
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private Long id;
 
     @JsonSerialize(using = ToStringSerializer.class)

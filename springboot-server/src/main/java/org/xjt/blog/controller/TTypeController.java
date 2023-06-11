@@ -11,6 +11,7 @@ import org.xjt.blog.service.TTypeService;
 import org.xjt.blog.utils.RespBean;
 
 import java.util.HashMap;
+import java.util.List;
 
 @RequestMapping("/type")
 @RestController
@@ -41,7 +42,8 @@ public class TTypeController {
     /*查询所有分类*/
     @GetMapping("/all")
     private RespBean getAllType(){
-        return tTypeService.getAllType();
+        List<TType> allType = tTypeService.getAllType();
+        return RespBean.ok("ok",allType);
     }
 
     /*分类的分页查询*/

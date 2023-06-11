@@ -10,7 +10,7 @@ import org.xjt.blog.utils.RespBean;
  * @Description TODO
  */
 public interface TCommentService {
-    RespBean save(TComment tComment);
+    int save(TComment tComment);
 
     RespBean deleteCommentById(Long id);
 

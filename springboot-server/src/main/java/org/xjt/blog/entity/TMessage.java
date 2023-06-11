@@ -31,6 +31,7 @@ public class TMessage {
     @JsonSerialize(using = ToStringSerializer.class)
     @ApiModelProperty(value = "留言id")
     @TableId(type = IdType.ID_WORKER)
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private Long id;
 
     @JsonSerialize(using = ToStringSerializer.class)

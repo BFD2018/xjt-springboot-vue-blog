@@ -13,7 +13,7 @@ import java.util.Map;
 public interface TBlogMapper extends BaseMapper<TBlog> {
     Object findBlogById(String bid);
 
-    List<Map<String,String>> getBlogsByPageHelper(String type_id, Boolean published, String flag, Boolean share_statement, Boolean is_delete);
+    List<Map<String,String>> getBlogsByPageHelper(int current,int size,String type_id, Boolean published, String flag, Boolean share_statement, Boolean is_delete);
 
     Map<String,String> findBlogDetailById(String bid);
 

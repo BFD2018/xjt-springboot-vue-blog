@@ -2,6 +2,7 @@ package org.xjt.blog.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import io.swagger.annotations.ApiModel;
@@ -18,6 +19,7 @@ public class TBlogTags implements Serializable {
     @JsonSerialize(using = ToStringSerializer.class)
     @ApiModelProperty(value = "博客id")
     @TableId(value = "blogs_id")
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private Long blogsId;
 
     @JsonSerialize(using = ToStringSerializer.class)

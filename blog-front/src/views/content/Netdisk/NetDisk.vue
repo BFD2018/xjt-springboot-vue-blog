@@ -8,7 +8,7 @@
           class="el-menu-vertical"
           @select="handleSelect">
           <el-menu-item>
-            <img src="~@/assets/logo.png" class="sidebar-logo">
+            <img src="~@/assets/images/common/xiong-blog-logo.jpg" class="sidebar-logo">
             <span class="sidebar-title">我的网盘</span>
           </el-menu-item>
 

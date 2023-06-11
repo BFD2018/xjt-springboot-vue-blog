@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import org.xjt.blog.entity.TType;
@@ -32,11 +33,12 @@ public class TTypeServiceImpl implements TTypeService {
         }
     }
 
+    @Cacheable
     @Override
-    public RespBean getAllType() {
+    public List<TType> getAllType() {
         List<TType> tTypeList = tTypeMapper.selectList(null);
 
-        return RespBean.ok("ok",tTypeList);
+        return tTypeList;
     }
 
     @Override

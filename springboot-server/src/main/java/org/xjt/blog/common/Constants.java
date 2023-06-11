@@ -6,6 +6,16 @@ package org.xjt.blog.common;
 public class Constants
 {
     /**
+     * 当前页
+     */
+    public static final Long CurrentPage = 1L;
+
+    /**
+     * 每页显示条目
+     */
+    public static final Long PageSize = 6L;
+
+    /**
      * UTF-8 字符集
      */
     public static final String UTF8 = "UTF-8";

@@ -2,6 +2,8 @@ package org.xjt.blog.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import org.xjt.blog.entity.TComment;
@@ -26,15 +28,12 @@ public class TCommentServiceImpl implements TCommentService {
     //存放迭代找出的所有子代回复的集合
     private List<Map<String, Object>> tempReplys = new ArrayList<>();
 
+    @CachePut
     @Override
-    public RespBean save(TComment tComment) {
+    public int save(TComment tComment) {
         Integer ret = tCommentMapper.insert(tComment);
 
-        if(ret<0){
-            return RespBean.error("评论失败");
-        }else{
-            return RespBean.ok("评论成功",tComment);
-        }
+        return ret;
     }
 
     @Override

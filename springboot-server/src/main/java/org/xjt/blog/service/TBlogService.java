@@ -1,35 +1,36 @@
 package org.xjt.blog.service;
 
-
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import org.xjt.blog.entity.TBlog;
-import org.xjt.blog.utils.RespBean;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public interface TBlogService {
     IPage<TBlog> getBlogsByPage(Integer current, Integer size, Boolean published, String flag, Boolean share_statement, Boolean is_delete);
 
-    RespBean getBlogsByPageHelper(Integer current, Integer size,String type_id, Boolean published, String flag, Boolean share_statement, Boolean is_delete);
+    List<Map<String,String>> getBlogsByPageHelper(int current, int size, String type_id, Boolean published, String flag, Boolean share_statement, Boolean is_delete);
 
-    RespBean getBlogByTitle(String title);
+    IPage<TBlog> getBlogByTitle(String title);
 
-    RespBean saveBlog(HashMap<String, Object> params);
+    TBlog saveBlog(HashMap<String, Object> params);
 
-    RespBean getBlogById(String bid);
+    Object getBlogById(String bid);
 
-    RespBean deleteBlogById(String bid);
+    int deleteBlogById(String bid);
 
-    RespBean updateBlog(HashMap<String, Object> params);
+    TBlog updateBlog(HashMap<String, Object> params);
 
-    RespBean getBlogAllCounts();
+    int getBlogAllCounts();
 
-    RespBean getBlogDetailById(String bid);
+    TBlog getBlogDetailById(String bid);
 
-    RespBean getBlogCountsByType();
+    List<Map<String, Integer>> getBlogCountsByType();
 
-    RespBean getAllBlogTitleToWordCloud();
+    List<Map<String, Object>> getAllBlogTitleToWordCloud();
 
     Map todayHistoryEvent();
+
+    IPage<TBlog> getBlogsByCommentsViews();
 }

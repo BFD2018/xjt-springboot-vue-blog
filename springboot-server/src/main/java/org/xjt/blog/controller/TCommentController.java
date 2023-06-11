@@ -32,7 +32,13 @@ public class TCommentController {
                 .setParentCommentId(Long.valueOf(parent_comment_id))
                 .setCreateTime(DateUtil.toLocalDateTime(new Date()));
 
-        return tCommentService.save(tComment);
+        int save = tCommentService.save(tComment);
+
+        if(save<0){
+            return RespBean.error("评论失败");
+        }else{
+            return RespBean.ok("评论成功",tComment);
+        }
     }
 
     @GetMapping("/delete")

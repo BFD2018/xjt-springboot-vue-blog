@@ -20,7 +20,7 @@
         <el-form-item label="验证码" prop="verify_code">
           <el-row>
             <el-col :span="15">
-              <el-input size="medium" v-model="ruleForm.verify_code"></el-input>
+              <el-input size="medium" v-model="ruleForm.verify_code" @keydown.enter="submitForm('ruleForm')"></el-input>
             </el-col>
             <el-col :span="8" :offset="1">
               <el-image id="verify_captcha" @click="updateCaptcha"
@@ -129,8 +129,8 @@
   }
 
   .login-card {
-    width: 420px;
-    height: 340px;
+    width: 450px;
+    height: 360px;
     position: absolute;
     left: 0;
     right: 0;

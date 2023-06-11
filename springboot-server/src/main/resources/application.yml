@@ -26,7 +26,7 @@ spring:
     url: jdbc:mysql://localhost:3306/xiong-blog?serverTimezone=UTC
     driver-class-name: com.mysql.jdbc.Driver
   redis:
-    open: true
+    open: false
     port: 6379
     host: 127.0.0.1
   servlet:

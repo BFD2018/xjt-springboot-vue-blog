@@ -58,6 +58,15 @@ Vue.prototype.$postRequest = $postRequest;
 import 'admin-lte/dist/js/adminlte.min.js'
 import 'admin-lte/dist/css/adminlte.min.css'
 
+//图片懒加载
+import VueLazyload from 'vue-lazyload'
+Vue.use(VueLazyload, {		  //options配置项
+  preLoad: 1.3,
+  error: require('@/assets/images/common/404.jpg'),
+  loading: require('@/assets/images/common/loading.gif'),
+  attempt: 3
+})
+
 new Vue({
   router: routers,
   store,

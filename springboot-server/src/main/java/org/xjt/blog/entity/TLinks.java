@@ -21,6 +21,7 @@ public class TLinks implements Serializable {
     @JsonSerialize(using = ToStringSerializer.class)        //将Long类型序列化时转化为字符串，保留相关精度
     @ApiModelProperty(value = "主键id")
     @TableId(type = IdType.ID_WORKER)
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private Long id;
 
     @ApiModelProperty(value = "博客地址")

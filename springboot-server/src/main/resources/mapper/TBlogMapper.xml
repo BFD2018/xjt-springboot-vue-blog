@@ -84,6 +84,7 @@
 				and b.`is_delete` = #{is_delete}
 			</if>
 		</where>
+		limit ((#{current} - 1) * #{size}),#{size}
 	</select>
 
 	<select id="findBlogDetailById" resultType="map" parameterType="string">

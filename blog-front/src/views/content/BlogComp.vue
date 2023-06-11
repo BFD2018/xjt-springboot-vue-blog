@@ -3,12 +3,7 @@
 		<el-card class="blog-card my-marginTop10">
 			<el-row type="flex" :gutter="30">
 				<el-col style="width: 320px;height: 180px;border:1px solid #ddd;overflow: hidden;border-radius: 8px;padding: 10px;">
-						<el-image
-								@click="$router.push(`/blog/detail/${blogInfo.bid}`)"
-								class="hvr-grow"
-								style="width: 100%;height: 100%;"
-								:src="blogInfo.first_picture"
-								fit="cover"></el-image>
+          <img v-lazy="blogInfo.first_picture"  style="width: 100%;height: 100%;" alt="">
 				</el-col>
 
 				<el-col :span="18">
@@ -48,11 +43,10 @@
 
 					<el-row type="flex" class="my-marginTop20">
 						<el-col style="width: 80px">
-							<el-image
+							<img
 									class="my-border"
 									style="width: 70px; height: 70px"
-									:src="blogInfo.avatar"
-									fit="contain"></el-image>
+									v-lazy="blogInfo.avatar"></img>
 						</el-col>
 						<el-col :span="1" style="line-height: 70px;align-items: center;font-size: 20px;">{{blogInfo.username}}</el-col>
 					</el-row>

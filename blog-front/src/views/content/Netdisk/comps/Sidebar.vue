@@ -45,7 +45,7 @@
 </template>
 
 <script>
-	import Logo from '@/assets/logo.png'
+	import Logo from '@/assets/images/common/xiong-blog-logo.jpg'
 
 	export default {
 		name: "Sidebar",
