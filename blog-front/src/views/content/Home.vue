@@ -25,21 +25,6 @@
             <BlogComp :blogInfo="item"></BlogComp>
           </div>
         </div>
-
-        <!--分页-->
-<!--        <div style="margin-top: 20px;" class="my-border-padding">-->
-<!--          <el-pagination-->
-<!--              background-->
-<!--              @size-change="handleSizeChange"-->
-<!--              @current-change="handleCurrentChange"-->
-<!--              :current-page="currentPage"-->
-<!--              :page-sizes="pageSizes"-->
-<!--              :page-size="pageSize"-->
-<!--              layout="total, sizes, prev, pager, next, jumper"-->
-<!--              :total="totalBlogs">-->
-<!--          </el-pagination>-->
-<!--        </div>-->
-
         <!--加载更多 -->
         <div class="loadmoreBlog" style="width: 120px;margin: 20px auto;">
           <el-button ref="loadmoreBtn" plain type="success" size="medium" round
@@ -50,6 +35,7 @@
     </div>
 
     <div class="layout-right" v-if="$store.state.login_user">
+      <!--      历史上的今天-->
       <div class="card" style="height: 1000px;overflow-y: scroll;">
         <div class="card-header">
           <div class="card-title">历史上的今天</div>
@@ -71,9 +57,11 @@
         </div>
       </div>
 
-      <el-card class="box-card">
-        <div class="clearfix my-title" slot="header">用户信息</div>
-        <div class="my-middle">
+      <div class="card card-outline card-info">
+        <div class="card-header">
+          <div class="card-title">用户信息</div>
+        </div>
+        <div class="card-body">
           <el-image
               class="my-border"
               style="width: 200px;height: 200px;"
@@ -82,43 +70,39 @@
           <p>{{ $store.state.login_user.username }}</p>
           <p>{{ $store.state.login_user.description }}</p>
         </div>
-      </el-card>
+      </div>
 
-      <el-card class="box-card my-marginTop10">
-        <div slot="header" class="clearfix">
-          <nav-bar>
-            <div slot="left-slot">分类专栏</div>
-            <div slot="right-slot">
-              <i class="el-icon-more" @click="blogTypeMore"></i>
-            </div>
-          </nav-bar>
+      <div class="card card-outline card-info">
+        <div class="card-header">
+          <div class="card-title">
+            分类标签
+          </div>
         </div>
-        <div class="tag-group">
-          <el-tag v-for="(item,index) in typesList" :key="index" effect="plain">
-            {{ item.name }}
-          </el-tag>
+
+        <div class="card-body" style="margin-top: 120px;">
+          <tag-cloud/>
         </div>
-      </el-card>
+      </div>
 
 
-      <el-card class="box-card my-marginTop10">
-        <div slot="header" class="clearfix">
-          <nav-bar>
-            <div slot="left-slot">热门文章</div>
-            <div slot="right-slot">
-              <el-button type="text">TOP5</el-button>
-            </div>
-          </nav-bar>
+      <div class="card card-outline card-success">
+        <div class="card-header">
+          <div class="card-title">
+            热门文章
+          </div>
+          <div class="card-tools">
+            TOP5
+          </div>
         </div>
-        <div v-for="(item,index) in hotBlogs" :key="index">
-          <div class="my-marginTop10">
+        <div class="card-body">
+          <div class="my-marginTop10" v-for="(item,index) in hotBlogs" :key="index">
             <el-tag effect="plain">{{ index + 1 }}</el-tag>
             <span class="my-marginLeft5"><i class="el-icon-view"></i> {{ item.views }}</span>
             <br/>
             <span class="my-mini-text">{{ item.title }}</span>
           </div>
         </div>
-      </el-card>
+      </div>
     </div>
 
   </div>
@@ -127,12 +111,14 @@
 <script>
 import BlogComp from "./BlogComp";
 import NavBar from "@/components/navbar/NavBar.vue"
+import TagCloud from "../../components/tagcloud/TagCloud";
 
 export default {
   name: "Home",
   components: {
     BlogComp,
     NavBar,
+    TagCloud,
   },
   data() {
     return {
@@ -168,7 +154,7 @@ export default {
     initBlogs() {
       let baseUrl = `/blog/getByPage?current=${this.currentPage}&size=${this.pageSize}`;
       this.$getRequest(baseUrl).then(res => {
-        console.log(res);
+        //console.log(res);
         if (res.data.status === 200) {
           this.blogsList.push(...res.data.obj.records);
           this.totalPages = res.data.obj.pages;
@@ -180,11 +166,15 @@ export default {
     },
     initType() {
       this.$getRequest("/type/all").then(res => {
-        console.log(res);
+        //console.log(res);
         if (res.data.status === 200) {
-          this.typesList.push(...res.data.obj);
-          //只展示前五个
-          this.typesList.splice(5);
+          let arr = res.data.obj;
+          for (let i = 0; i < arr.length; i++) {
+            let item = arr[i]
+            item.url = "/blog/type/?id="+ item.id + "&name=" + item.name;
+            //console.log(item);
+            this.typesList.push(item);
+          }
         }
       })
     },
@@ -229,11 +219,11 @@ export default {
   created() {
     this.initCarouselListData();
     this.initBlogs();
-    this.initType();
+    //this.initType();
 
     this.initGetToadyHistroy();
 
-    console.log(this.$store.state.login_user);
+    //console.log(this.$store.state.login_user);
   }
 }
 </script>

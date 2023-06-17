@@ -32,6 +32,7 @@ public class ShiroConfig {
         Map<String, String> map = new LinkedHashMap<>();
         map.put("/admin/**", "anon");      //测试专用
         map.put("/blog/**", "anon");      //测试专用
+        map.put("/type/**", "anon");      //测试专用
         map.put("/comment/**", "anon");      //测试专用
 
         map.put("/classpath/**", "anon");      //测试专用

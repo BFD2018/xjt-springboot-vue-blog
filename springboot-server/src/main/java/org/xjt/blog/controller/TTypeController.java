@@ -1,10 +1,10 @@
 package org.xjt.blog.controller;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.xjt.blog.entity.TType;
 import org.xjt.blog.service.TTypeService;
@@ -18,8 +18,6 @@ import java.util.List;
 public class TTypeController {
     @Autowired
     private TTypeService tTypeService;
-
-    RespBean resp = RespBean.build();
 
     /*保存分类专栏*/
     @PostMapping("/save")
@@ -35,14 +33,18 @@ public class TTypeController {
 //        }
 
         String typeName = params.get("typeName");
-
-        return tTypeService.saveType(typeName);
+        int insertType = tTypeService.saveType(typeName);
+        if(insertType>0){
+            return RespBean.ok("ok");
+        }else{
+            return RespBean.error("insert Type failure");
+        }
     }
 
-    /*查询所有分类*/
     @GetMapping("/all")
     private RespBean getAllType(){
-        List<TType> allType = tTypeService.getAllType();
+        List<TType> allType = tTypeService.queryAllTypeList();
+
         return RespBean.ok("ok",allType);
     }
 
@@ -54,7 +56,8 @@ public class TTypeController {
             @ApiImplicitParam(name = "pageSize",value = "每页显示个数")
     })
     private RespBean toGetTypeByPage(@PathVariable("currentPage") Integer currentPage, @PathVariable("pageSize") Integer pageSize){
-        return tTypeService.getTypeByPage(currentPage,pageSize);
+        IPage<TType> typeByPage = tTypeService.getTypeByPage(currentPage, pageSize);
+        return RespBean.ok("ok",typeByPage);
     }
 
     /*根据id查询分类*/
@@ -63,8 +66,10 @@ public class TTypeController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id",value = "分类id"),
     })
-    private RespBean toGetTypeById(@PathVariable("id") String id){
-        return tTypeService.getTypeById(id);
+    private RespBean getTTypeById(@PathVariable("id") String id){
+        TType tType = tTypeService.getTypeById(id);
+
+        return RespBean.ok("ok",tType);
     }
 
     /*通过名称查找分类*/
@@ -73,8 +78,10 @@ public class TTypeController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "name",value = "分类name"),
     })
-    private RespBean toGetTypeByName(@PathVariable("name") String name){
-        return tTypeService.getTypeByName(name);
+    private RespBean getTTypeByName(@PathVariable("name") String name){
+        List<TType> tTypeList = tTypeService.getTypeByName(name);
+
+        return RespBean.ok("ok",tTypeList);
     }
 
 
@@ -82,7 +89,13 @@ public class TTypeController {
     @PostMapping("/update")
     @ApiOperation("通过id更新分类")
     private RespBean toUpdateType(@RequestBody TType tType){
-        return tTypeService.updateType(tType);
+        int updateType = tTypeService.updateType(tType);
+        if(updateType > 0){
+            return RespBean.ok("ok");
+        }else{
+            return RespBean.error("update type failure");
+        }
+
     }
 
     /*删除分类byID*/
@@ -92,7 +105,12 @@ public class TTypeController {
             @ApiImplicitParam(name = "id",value = "更新分类tag"),
     })
     private RespBean toDeleteType(@PathVariable("id") String id){
-        return tTypeService.deleteType(id);
+        int deleteType = tTypeService.deleteType(id);
+        if(deleteType > 0){
+            return RespBean.ok("ok");
+        }else{
+            return RespBean.error("delete type failure");
+        }
     }
 
 }

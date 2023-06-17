@@ -1,5 +1,6 @@
 package org.xjt.blog.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import org.xjt.blog.entity.TType;
 import org.xjt.blog.utils.RespBean;
 
@@ -12,18 +13,18 @@ import java.util.List;
  * @Description TODO
  */
 public interface TTypeService {
-    RespBean saveType(String typeName);
+    int saveType(String typeName);
 
-    List<TType> getAllType();
+    List<TType> queryAllTypeList();
 
-    RespBean getTypeByPage(Integer currentPage, Integer pageSize);
+    IPage<TType> getTypeByPage(Integer currentPage, Integer pageSize);
 
-    RespBean getTypeById(String id);
+    TType getTypeById(String id);
 
-    RespBean getTypeByName(String name);
+    List<TType> getTypeByName(String name);
 
-    RespBean updateType(TType tType);
+    int updateType(TType tType);
 
-    RespBean deleteType(String id);
+    int deleteType(String id);
 
 }

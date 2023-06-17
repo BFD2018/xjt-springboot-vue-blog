@@ -7,7 +7,7 @@ const Login = () => import('@/views/Login.vue')
 const Register = () => import('@/views/Register.vue')
 
 const Index = () => import('@/views/Index.vue')
-const BlogList = () => import('@/views/content/Home.vue')
+const Home = () => import('@/views/content/Home.vue')
 const TypeBlog = () => import('@/views/content/TypeBlog.vue')
 const TagBlog = () => import('@/views/content/TagBlog.vue')
 const Messages = () => import('@/views/content/Messages.vue')
@@ -25,8 +25,8 @@ const NetDisk = () => import('@/views/content/Netdisk/NetDisk.vue')
 const routes = [
   {
     path: '/',
-    name: 'login',
-    redirect:"/toLogin"
+    name: 'home',
+    redirect:"/blog/home"
   },
   {
     path: '/toLogin',
@@ -43,8 +43,8 @@ const routes = [
     name: '首页',
     component: Index,
     children: [
-      {path: "/blog/home", name: "首页", component: BlogList},
-      {path: "/blog/type", name: "分类专栏", component: TypeBlog},
+      {path: "/blog/home", name: "首页", component: Home},
+      {path: "/blog/type", name: "分类", component: TypeBlog},
       {path: "/blog/tag", name: "标签", component: TagBlog},
       {path: "/blog/messages", name: "留言板", component: Messages},
       {path: "/blog/netdisk", name: "个人网盘", component: NetDisk,},

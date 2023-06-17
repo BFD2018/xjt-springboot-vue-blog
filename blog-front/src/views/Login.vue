@@ -101,7 +101,7 @@
                 this.$notify.success("登录成功！");
                 this.$store.commit("updateLoginUser", res.data.obj);
                 setTimeout(() => {
-                  this.$router.push("/blog/list")
+                  this.$router.push("/blog/home")
                 }, 500)
               } else {
                 this.$notify.error(res.data.msg);

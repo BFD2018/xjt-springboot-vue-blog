@@ -20,8 +20,8 @@ import java.util.Objects;
  * Controller层所有方法都加上切片
  */
 @Slf4j
-@Aspect
-@Configuration
+//@Aspect
+//@Configuration
 public class ControllerAspect {
     @Around("execution(* org.xjt.blog.controller.*.*(..))")
     public Object around(ProceedingJoinPoint point) throws Throwable {
