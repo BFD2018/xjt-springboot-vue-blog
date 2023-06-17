@@ -3,7 +3,7 @@
     <div id="header-outer">
       <el-row type="flex" justify="space-between">
         <el-col :span="3" class="logo-title-col">
-          <div class="my-left">
+          <div style="float: left;margin-left: 50px;">
             <img src="@/assets/images/common/xiong-blog-logo.jpg" class="logo" alt="" height="60px">
           </div>
         </el-col>
@@ -18,7 +18,7 @@
             background-color="#ffffff"
             text-color="#303133"
             active-text-color="#409EFF">
-            <el-menu-item index="/blog/list">博客列表</el-menu-item>
+            <el-menu-item index="/blog/home">首页</el-menu-item>
             <el-menu-item index="/blog/type">分类专栏</el-menu-item>
             <el-menu-item index="/blog/tag">文章标签</el-menu-item>
             <el-menu-item index="/blog/messages">留言板</el-menu-item>
@@ -73,19 +73,19 @@
     <div id="footer-outer">
       <div class="footer-content">
         <div class="item contact-me">
-          <h3>联系我</h3>
+          <h4>联系我</h4>
           <p>Email:1351655382@qq.com</p>
           <p>Phone:15990076961</p>
         </div>
         <div class="item focus-me">
-          <h3>关注我</h3>
+          <h4>关注我</h4>
           <el-image
             style="width: 100px; height: 100px"
             src="https://ae01.alicdn.com/kf/Hc0d21f283e11463894c017c6b673b84bM.png"
             fit="contain"></el-image>
         </div>
         <div class="item talk-us">
-          <h3>与我交流</h3>
+          <h4>与我交流</h4>
           <el-image
             style="width: 100px; height: 100px"
             src="https://ae01.alicdn.com/kf/Hc0d21f283e11463894c017c6b673b84bM.png"
@@ -109,7 +109,7 @@
     data() {
       return {
         inputSearchKey: '',
-        headerNavActive:"/blog/list",
+        headerNavActive:"/blog/home",
       }
     },
     watch:{

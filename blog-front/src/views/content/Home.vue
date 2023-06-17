@@ -1,5 +1,5 @@
 <template>
-  <div class="blog-list-view">
+  <div class="home-view">
     <div class="layout-left">
       <!-- 轮播图      -->
       <div class="card card-default card-outline">
@@ -27,17 +27,24 @@
         </div>
 
         <!--分页-->
-        <div style="margin-top: 20px;" class="my-border-padding">
-          <el-pagination
-              background
-              @size-change="handleSizeChange"
-              @current-change="handleCurrentChange"
-              :current-page="currentPage"
-              :page-sizes="pageSizes"
-              :page-size="pageSize"
-              layout="total, sizes, prev, pager, next, jumper"
-              :total="totalBlogs">
-          </el-pagination>
+<!--        <div style="margin-top: 20px;" class="my-border-padding">-->
+<!--          <el-pagination-->
+<!--              background-->
+<!--              @size-change="handleSizeChange"-->
+<!--              @current-change="handleCurrentChange"-->
+<!--              :current-page="currentPage"-->
+<!--              :page-sizes="pageSizes"-->
+<!--              :page-size="pageSize"-->
+<!--              layout="total, sizes, prev, pager, next, jumper"-->
+<!--              :total="totalBlogs">-->
+<!--          </el-pagination>-->
+<!--        </div>-->
+
+        <!--加载更多 -->
+        <div class="loadmoreBlog" style="width: 120px;margin: 20px auto;">
+          <el-button ref="loadmoreBtn" plain type="success" size="medium" round
+                     :disabled="currentPage >= totalPages"
+                     @click="loadmore">加载更多</el-button>
         </div>
       </div>
     </div>
@@ -122,7 +129,7 @@ import BlogComp from "./BlogComp";
 import NavBar from "@/components/navbar/NavBar.vue"
 
 export default {
-  name: "BlogList",
+  name: "Home",
   components: {
     BlogComp,
     NavBar,
@@ -135,17 +142,20 @@ export default {
       hotBlogs: [],		//热门博客
       todayHistoryEventList: [],
 
-      //分页
+      //总博客数
       totalBlogs: 0,
+      //总页数
+      totalPages: 0,
+      //当前页
       currentPage: 1,
-      pageSizes: [3, 6, 9, 12],
-      pageSize: 6,
+      //每页显示条目
+      pageSize:6,
     }
   },
   methods: {
     initCarouselListData(){
       this.$getRequest("/blog/front/carousel").then(res => {
-        console.log(res);
+        //console.log(res);
         this.carouselList = res.data.obj
       })
     },
@@ -160,12 +170,9 @@ export default {
       this.$getRequest(baseUrl).then(res => {
         console.log(res);
         if (res.data.status === 200) {
-          this.blogsList.splice(0);
           this.blogsList.push(...res.data.obj.records);
-
+          this.totalPages = res.data.obj.pages;
           this.totalBlogs = Number(res.data.obj.total);
-
-          this.initHotBlog();
         } else {
           this.$message.error(res.data.msg);
         }
@@ -200,17 +207,24 @@ export default {
       this.$router.push(`/blog/detail/${clickBlogInfo.id}`)
     },
 
+    loadmore(){
+      this.currentPage++;
+      // if(Number(this.currentPage) > Number(this.totalPages)){
+      //   this.$message.warning("已经到底啦 我也是有底线的~~~")
+      // }
+      this.initBlogs();
+    }
     /*分页*/
-    handleSizeChange(pageSize) {
-      //console.log(`每页 ${pageSize} 条`);
-      this.pageSize = pageSize;
-      this.initBlogs()
-    },
-    handleCurrentChange(current) {
-      //console.log(`当前页: ${current}`);
-      this.currentPage = current;
-      this.initBlogs()
-    },
+    // handleSizeChange(pageSize) {
+    //   //console.log(`每页 ${pageSize} 条`);
+    //   this.pageSize = pageSize;
+    //   this.initBlogs()
+    // },
+    // handleCurrentChange(current) {
+    //   //console.log(`当前页: ${current}`);
+    //   this.currentPage = current;
+    //   this.initBlogs()
+    // },
   },
   created() {
     this.initCarouselListData();
@@ -225,7 +239,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.blog-list-view {
+.home-view {
   display: flex;
 
   .layout-left {

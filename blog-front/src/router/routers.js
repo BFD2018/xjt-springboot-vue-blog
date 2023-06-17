@@ -7,7 +7,7 @@ const Login = () => import('@/views/Login.vue')
 const Register = () => import('@/views/Register.vue')
 
 const Index = () => import('@/views/Index.vue')
-const BlogList = () => import('@/views/content/BlogList.vue')
+const BlogList = () => import('@/views/content/Home.vue')
 const TypeBlog = () => import('@/views/content/TypeBlog.vue')
 const TagBlog = () => import('@/views/content/TagBlog.vue')
 const Messages = () => import('@/views/content/Messages.vue')
@@ -43,7 +43,7 @@ const routes = [
     name: '首页',
     component: Index,
     children: [
-      {path: "/blog/list", name: "博客列表", component: BlogList},
+      {path: "/blog/home", name: "首页", component: BlogList},
       {path: "/blog/type", name: "分类专栏", component: TypeBlog},
       {path: "/blog/tag", name: "标签", component: TagBlog},
       {path: "/blog/messages", name: "留言板", component: Messages},
