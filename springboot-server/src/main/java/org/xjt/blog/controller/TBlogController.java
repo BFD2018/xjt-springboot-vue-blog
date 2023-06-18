@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.xjt.blog.entity.TBlog;
 import org.xjt.blog.service.TBlogService;
 import org.xjt.blog.utils.RespBean;
+import org.xjt.blog.vo.BlogUserVo;
 
 import java.util.HashMap;
 import java.util.List;
@@ -43,6 +44,7 @@ public class TBlogController {
             @ApiImplicitParam(name = "size",value = "每页的数量"),
             @ApiImplicitParam(name = "published",value = "是否公开"),
             @ApiImplicitParam(name = "flag",value = "原创或转载"),
+            @ApiImplicitParam(name = "type_id",value = "分类id"),
             @ApiImplicitParam(name = "share_statement",value = "草稿"),
             @ApiImplicitParam(name = "is_delete",value = "是否已删除"),
     })
@@ -50,11 +52,12 @@ public class TBlogController {
                                    @RequestParam(value = "size",required = false,defaultValue = "6") Integer size,
                                    @RequestParam(value = "published",required = false) Boolean published,
                                    @RequestParam(value = "flag",required = false) String flag,
+                                   @RequestParam(value = "typeId",required = false) String typeId,
                                    @RequestParam(value = "share_statement",required = false) Boolean share_statement,
                                    @RequestParam(value = "is_delete",required = false) Boolean is_delete){
         log.debug("current="+current);
         log.debug("size="+size);
-        IPage<TBlog> blogsByPage = tBlogService.getBlogsByPage(current, size, published, flag, share_statement, is_delete);
+        IPage<TBlog> blogsByPage = tBlogService.getBlogsByPage(current, size, published, flag,typeId, share_statement, is_delete);
 
         return RespBean.ok(blogsByPage);
     }
@@ -100,7 +103,7 @@ public class TBlogController {
     @ApiOperation("前台-通过id查询博客详情")
     public RespBean getBlogDetailById(@RequestParam("blog_id") String blog_id){
         log.warn("blog_id=="+blog_id);
-        TBlog blogDetailById = tBlogService.getBlogDetailById(blog_id);
+        BlogUserVo blogDetailById = tBlogService.getBlogDetailById(blog_id);
 
         return RespBean.ok("ok",blogDetailById);
     }

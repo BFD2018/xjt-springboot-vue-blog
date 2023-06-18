@@ -24,6 +24,31 @@
 		<result column="comment_count" property="commentCount"/>
 		<result column="is_delete" property="isDelete"/>
 	</resultMap>
+
+	<resultMap id="BlogUserVoResult" type="org.xjt.blog.vo.BlogUserVo">
+		<id column="id" property="id"/>
+		<result column="title" property="title"/>
+		<result column="description" property="description"/>
+		<result column="first_picture" property="firstPicture"/>
+		<result column="content" property="content"/>
+		<result column="flag" property="flag"/>
+		<result column="published" property="published"/>
+		<result column="appreciation" property="appreciation"/>
+		<result column="commentabled" property="commentabled"/>
+		<result column="create_time" property="createTime"/>
+		<result column="recommend" property="recommend"/>
+		<result column="share_statement" property="shareStatement"/>
+		<result column="update_time" property="updateTime"/>
+		<result column="views" property="views"/>
+		<result column="type_id" property="typeId"/>
+		<result column="user_id" property="userId"/>
+		<result column="comment_count" property="commentCount"/>
+		<result column="is_delete" property="isDelete"/>
+		<result column="username" property="username"/>
+		<result column="nickname" property="nickname"/>
+		<result column="avatar" property="avatar"/>
+		<result column="email" property="email"/>
+	</resultMap>
 	
 	<select id="findBlogById" resultType="map">
 		SELECT
@@ -87,40 +112,18 @@
 		limit ((#{current} - 1) * #{size}),#{size}
 	</select>
 
-	<select id="findBlogDetailById" resultType="map" parameterType="string">
+	<select id="findBlogDetailById" resultMap="BlogUserVoResult" parameterType="string">
 		SELECT
-		  b.`id` AS bid,
-		  b.`title`,
-		  b.`description`,
-		  b.`first_picture`,
-		  b.`content`,
-		  b.`flag`,
-		  b.`published`,
-		  b.`appreciation`,
-		  b.`commentabled`,
-		  b.`recommend`,
-		  b.`share_statement`,
-		  b.`views`,
-		  b.`type_id`,
-		  b.`user_id`,
-		  b.`comment_count`,
-		  b.`is_delete`,
-		  b.`create_time`,
-		  b.`update_time`,
-		  u.`id` AS uid,
+		  b.*,
 		  u.`username`,
 		  u.`nickname`,
 		  u.`avatar`,
-		  u.`email`,
-		  u.`description`,
-		  ty.`name` AS type_name
+		  u.`email`
 		FROM
 		  t_blog b
 		  LEFT JOIN t_user u
 		    ON b.`user_id` = u.`id`
-		  LEFT JOIN t_type ty
-		    ON b.`type_id` = ty.`id`
-		WHERE b.`id` = #{bid}
+		WHERE b.`id` = #{blogId}
 	</select>
 
 	<select id="getBlogCountsGroupByType" resultType="map">

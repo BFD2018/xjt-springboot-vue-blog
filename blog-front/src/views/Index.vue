@@ -146,6 +146,7 @@
       },
 
       handleSelect(key, keyPath) {
+        //console.log(key);
         this.headerNavActive = key;
       }
     },

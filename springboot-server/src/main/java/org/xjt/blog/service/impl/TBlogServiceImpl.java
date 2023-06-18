@@ -25,7 +25,7 @@ import org.xjt.blog.mapper.TBlogMapper;
 import org.xjt.blog.mapper.TBlogTagsMapper;
 import org.xjt.blog.service.TBlogService;
 import org.xjt.blog.utils.HttpUtils;
-import org.xjt.blog.utils.RedisUtils;
+import org.xjt.blog.vo.BlogUserVo;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -42,15 +42,10 @@ public class TBlogServiceImpl implements TBlogService {
     @Autowired
     private TBlogTagsMapper tBlogTagsMapper;
 
-    @Autowired
-    private RedisUtils redisUtils;
-
-
-
 
     @Cacheable(value = "blogsByPage",key = "#current")
     @Override
-    public IPage<TBlog> getBlogsByPage(Integer current, Integer size, Boolean published, String flag, Boolean share_statement, Boolean is_delete) {
+    public IPage<TBlog> getBlogsByPage(Integer current, Integer size, Boolean published, String flag, String typeId,Boolean share_statement, Boolean is_delete) {
         if(current < 1){
             current  = 1;
         }
@@ -67,6 +62,9 @@ public class TBlogServiceImpl implements TBlogService {
         }
         if (flag != null) {
             wrapper.eq("flag", flag);
+        }
+        if (typeId != null && !typeId.equals("-1")) {
+            wrapper.eq("type_id", typeId);
         }
         if (share_statement != null) {
             wrapper.eq("share_statement", share_statement);
@@ -241,23 +239,21 @@ public class TBlogServiceImpl implements TBlogService {
 
     @Cacheable(value = "blogdetail",key = "#bid")
     @Override
-    public TBlog getBlogDetailById(String bid) {
+    public BlogUserVo getBlogDetailById(String bid) {
         try {
-            Object obj = tBlogMapper.findBlogDetailById(bid);
-            Map objMap = null;
-            if(obj instanceof Map){
-                objMap = (Map) obj;
-            }
+            BlogUserVo blogDetailById = tBlogMapper.findBlogDetailById(bid);
 
-            Integer views = (Integer) objMap.get("views");
-            TBlog newBlog = new TBlog().setId(Long.valueOf(bid)).setViews(views+1);
+            if (ObjectUtils.isEmpty(blogDetailById)) {
+                return null;
+            }
+            //访问量+1
+            Integer views = blogDetailById.getViews();
+            TBlog newBlog = new TBlog().setId(Long.valueOf(blogDetailById.getId())).setViews(views+1);
             tBlogMapper.updateById(newBlog);
 
-            if (ObjectUtils.isEmpty(obj)) {
-                return null;
-            } else {
-                return newBlog;
-            }
+            return blogDetailById;
+
+
         } catch (Exception e) {
             e.printStackTrace();
             return null;

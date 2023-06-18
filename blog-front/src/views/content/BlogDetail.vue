@@ -6,7 +6,7 @@
           <el-col :span="2">
             <img
                 class="my-border"
-                style="width: 60px;height: 60px;"
+                style="width: 60px;height: 60px;border-radius: 8px;"
                 v-lazy="blogAuthorInfo.avatar"></img>
           </el-col>
           <el-col :span="1">{{ blogAuthorInfo.username }}</el-col>

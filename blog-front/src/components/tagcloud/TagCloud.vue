@@ -14,7 +14,7 @@ export default {
   data() {
     return {
       tagList:[],   //{ name: '标签1', url: 'www.baidu.com' },
-      rotateSpeed:80,   //mouseover 旋转速度
+      rotateSpeed:250,   //mouseover 旋转速度（数值越大 旋转越慢）
 
       radius: 160,
       dtr: Math.PI / 180,
@@ -188,7 +188,7 @@ export default {
       let that = this;
       setTimeout(function (){
         that.onReady();
-      },200)
+      },500)
     },
     // 生成标签云
     onReady() {

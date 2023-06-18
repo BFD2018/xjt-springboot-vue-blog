@@ -3,6 +3,7 @@ package org.xjt.blog.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.springframework.transaction.annotation.Transactional;
 import org.xjt.blog.entity.TBlog;
+import org.xjt.blog.vo.BlogUserVo;
 
 import java.util.List;
 import java.util.Map;
@@ -14,7 +15,7 @@ public interface TBlogMapper extends BaseMapper<TBlog> {
 
     List<Map<String,String>> getBlogsByPageHelper(int current,int size,String type_id, Boolean published, String flag, Boolean share_statement, Boolean is_delete);
 
-    Map<String,String> findBlogDetailById(String bid);
+    BlogUserVo findBlogDetailById(String blogId);
 
     List<Map<String, Integer>> getBlogCountsGroupByType();
 }
